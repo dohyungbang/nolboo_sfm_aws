@@ -1,6 +1,6 @@
 # --- SETTING --- #
 .packages = c("shiny", "shinymanager", "shinyjs", "shinydashboard", "shinycssloaders",
-              "dplyr", "lubridate", "sysfonts", "ggplot2", "plotly", "stringr", "RSelenium", "glmnet")
+              "dplyr", "lubridate", "sysfonts", "plotly", "stringr", "RSelenium", "glmnet")
 
 .inst <- .packages %in% installed.packages()
 if(length(.packages[!.inst]) > 0) install.packages(.packages[!.inst])
@@ -384,11 +384,10 @@ server <- function(input, output, session) {
   observeEvent(session$input$logout,{
     session$reload()
   })
-  
 
   observeEvent(input$sfm_run_button, {
 
-    sgbiz_data <- Collector(input$roadAddress)
+    sgbiz_data <- Collector(input$roadAddress, input$sfm_input_radius)
     sgbiz_data <- DataProcessor(sgbiz_data)
 
     # Input Page
@@ -851,4 +850,3 @@ server <- function(input, output, session) {
 
 # --- RUN APP --- # 
 shinyApp(ui = ui, server = server)
-

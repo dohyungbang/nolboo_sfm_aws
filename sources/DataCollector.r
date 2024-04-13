@@ -1,5 +1,5 @@
-# Start a browser session
 Collector <- function(address, radius){
+  
   remDr <- rsDriver(browser = "chrome", 
                     port = 4444L,
                     chromever = "latest", 
@@ -9,7 +9,7 @@ Collector <- function(address, radius){
   remDr$navigate("https://sso.sbiz.or.kr/sso/subLoginAction.do?joinSite=SG&reqSite=https://sg.sbiz.or.kr/godo/index.sg#")
   Sys.sleep(3)
   
-  # SEND ID & PW
+  # Send ID & PW
   remDr$findElement(using = "css selector", value = "#id")$clickElement()
   remDr$findElement(using = "css selector", value = "#id")$clearElement()
   remDr$findElement(using = "css selector", value = "#id")$sendKeysToElement(list("bdh718"))
@@ -268,7 +268,6 @@ Collector <- function(address, radius){
   }
   
   exp_work_age[5] <- unlist(strsplit(gsub(" ~ ", "~", remDr$findElement(using = "xpath", "//*[@id='page4']/div[24]/table/tbody/tr[5]")$getElementText()), " "))[6]
-  
   
   ## 지역현황
   remDr$findElement(using = "css selector", "#menu5")$clickElement()
