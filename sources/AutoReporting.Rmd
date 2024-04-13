@@ -110,7 +110,7 @@ ggplot(sales_df, aes(x = label, y = value, fill = label)) +
 ### **1) 최근 13개월 상권 내 동종업체 수 추이**
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
-year_mon_labels <- format(c(ym(last_month) - months(12:1), ym(last_month)), "%Y년 %m월")
+year_mon_labels <- format(c(ym(data$store_last_month) - months(12:1), ym(data$store_last_month)), "%Y년 %m월")
 store_n_trend <- 
   data.frame(label = 1:13,
              label_str = year_mon_labels,

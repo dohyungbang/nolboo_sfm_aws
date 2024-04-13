@@ -4,13 +4,13 @@ library(tidyr)
 library(xlsx)
 library(stringr)
   
-Isotonizer <- function(iso_var_lists, data){
+Isotonizer <- function(jump_points_list, fitted_y_norm_list, data){
   
-  pos_vars_lists <- iso_var_lists[[1]]
-
-  for (i in 1:length(pos_vars_lists)){
+  target_var_lists <- names(jump_points_list)
+  
+  for (i in 1:length(jump_points_list)){
     
-    target_var_name <- pos_vars_lists[i]
+    target_var_name <- target_var_lists[i]
     iso_value <- 
       cut(2, c(-1, jump_points_list[[target_var_name]]), labels = fitted_y_norm_list[[target_var_name]]) %>% 
       as.character() %>% 

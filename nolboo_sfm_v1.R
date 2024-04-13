@@ -1,16 +1,19 @@
 # --- SETTING --- #
 .packages = c("shiny", "shinymanager", "shinyjs", "shinydashboard", "shinycssloaders",
-              "dplyr", "lubridate", "sysfonts", "plotly", "stringr", "RSelenium", "glmnet")
+              "dplyr", "lubridate", "sysfonts", "plotly", "stringr", "RSelenium", "glmnet", "reticulate")
 
 .inst <- .packages %in% installed.packages()
 if(length(.packages[!.inst]) > 0) install.packages(.packages[!.inst])
 
 lapply(.packages, require, character.only=TRUE)
 
-source("./sources/DataCollector.r")
 source("./sources/DataProcessor.r")
-iso_var_lists <- readRDS("./sources/iso_var_lists.r")
+source("./sources/Isotonizer.r")
+jump_points_list <- readRDS("./sources/jump_points_list.rds")
+fitted_y_norm_list<- readRDS("./sources/fitted_y_norm_list.rds")
+sgbiz_var_lists <- readRDS("./sources/sgbiz_var_lists.rds")
 model <- readRDS("./sources/elasNet_optimal.rds")
+source_python('./sources/DataCollector_python.py')
 
 write.csv.utf8.BOM <- function(df, filename)
 {
@@ -119,8 +122,9 @@ sfm_body <- tabItem(
                  
                  h4(strong('목표 후보지 그룹 지정')),
                  fluidRow(
-                   column(6,textInput("sfm_input_name", "평가후보지 이름:")),
-                   column(6,selectInput("sfm_input_group", "평가후보지 그룹:", choices = c("Group 1", "Group 2", "Group 3")))
+                   column(4, textInput("sfm_input_name", "평가후보지 이름:")),
+                   column(4, textInput("sfm_input_sv", "담당자명:")),
+                   column(4, selectInput("sfm_input_brand", "목표 브랜드: ", selected = "부대단독형", choices = c("부대단독형", "보쌈부대 통합형"))))
                    
                  ),
                  tags$hr(),
@@ -131,29 +135,29 @@ sfm_body <- tabItem(
                  
                  h4(strong('목표 후보지 브랜드 및 매장 특성 ')),
                  fluidRow(
-                   column(4, selectInput("sfm_input_brand", "목표 브랜드: ", selected = "부대단독형", choices = c("부대단독형", "보쌈부대 통합형"))),
                    column(4, numericInput("sfm_input_area_hall", "홀 면적 (평방미터): ", value = 0)),
-                   column(4, numericInput("sfm_input_area_kitchen", "주방 면적 (평방미터): ", value = 0))
+                   column(4, numericInput("sfm_input_area_kitchen", "주방 면적 (평방미터): ", value = 0)),
+                   column(4, numericInput("sfm_input_ntable", "테이블 수 (개): ", value = 0))
                  ),
                  fluidRow(
-                   column(4, numericInput("sfm_input_ntable", "테이블 수 (개): ", value = 0)),
                    column(4, numericInput("sfm_input_nchair", "좌석 수 (개): ", value = 0)),
                    column(4, numericInput("sfm_input_floor_store", "매장 층 수 (층): ", value = 0)),
+                   column(4, numericInput("sfm_input_floor_bldg", "건물전체 층 수 (층): ", value = 0)),
                  ),
                  fluidRow(
-                   column(4, numericInput("sfm_input_floor_bldg", "건물전체 층 수 (층): ", value = 0)),
                    column(4, numericInput("sfm_input_opertime", "일 평균 영업시간 (시간): ", value = 0)),
                    column(4, numericInput("sfm_input_operday", "월 평균 영업일수 (일): ", value = 0)),
+                   column(4, selectInput("sfm_input_parking", "주차가능 여부:", choices = c("가능", "불가능"), selected = "가능")),
                  ),
                  fluidRow(
-                   column(4, numericInput("sfm_input_parking", "주차가능 여부 (1=예; 0=아니오):", value = 0)),
                    column(4, numericInput("sfm_input_emp_full", "직원 수-풀타임 (명): ", value = 0)),
-                   column(4, numericInput("sfm_input_emp_part", "직원 수-파트타임 (명): ", value = 0))
+                   column(4, numericInput("sfm_input_emp_part", "직원 수-파트타임 (명): ", value = 0)),
+                   column(4, numericInput("sfm_input_rentcost", "예상 월 임대료 (원): ", value = 0))
                  ),
                  fluidRow(
-                   column(4, numericInput("sfm_input_rentcost", "예상 월 임대료 (원): ", value = 0)),
-                   column(4, numericInput("sfm_input_del_tpl", "배달대행 (1=이용; 0=이용안함):", value = 0)),
-                   column(4, numericInput("sfm_input_del_store", "직접배달 (1=이용; 0=이용안함): ", value = 0))
+                   column(4, numericInput("sfm_input_del_ad_cost", "예상 월 배달판촉비(원): ", value = 0)),
+                   column(4, selectInput("sfm_input_del_tpl", "배달대행:", choices = c("이용", "이용안함"), selected = "이용")),
+                   column(4, selectInput("sfm_input_del_store", "직접배달: ", choices = c("이용", "이용안함"), selected = "이용"))
                  ),
                  tags$hr(),
                  
@@ -387,13 +391,16 @@ server <- function(input, output, session) {
 
   observeEvent(input$sfm_run_button, {
 
-    sgbiz_data <- Collector(input$roadAddress, input$sfm_input_radius)
-    sgbiz_data <- DataProcessor(sgbiz_data)
+    sgbiz_data <- ExtractData(input$roadAddress, input$sfm_input_radius)
+    sgbiz_data <- ExtractData(address, radius)
+    sgbiz_data_new <- DataProcessor(sgbiz_data, sgbiz_var_lists)
+    seoul <- ifelse(str_detect(input$roadAddress, "서울"), 1, 0)
 
     # Input Page
     input_data <- data.frame(nolbu_name = input$sfm_input_name,
-                             group = input$sfm_input_group,
+                             sv = input$sfm_input_sv,
                              nolbu_address = input$roadAddress,
+                             nolbu_seoul = seoul,
                              nolbu_brand = input$sfm_input_brand,
                              nolbu_radius = input$sfm_input_radius,
                              nolbu_store_area_hall = input$sfm_input_area_hall,
@@ -408,26 +415,33 @@ server <- function(input, output, session) {
                              nolbu_store_emp_full = input$sfm_input_emp_full,
                              nolbu_store_emp_part = input$sfm_input_emp_part,
                              nolbu_rent = input$sfm_input_rentcost,
+                             nolbu_delivery_ad_cost = input$sfm_input_del_ad_cost, 
                              nolbu_delivery_rider_tpl = input$sfm_input_del_tpl,
                              nolbu_delivery_rider_store = input$sfm_input_del_store
     )
 
     input_data$nolbu_brand <- ifelse(input_data$nolbu_brand == "부대 단독형", 1, 0) %>% as.numeric()
-
+    input_data$nolbu_brand <- ifelse(input_data$nolbu_bldg_parking == "가능", 1, 0) %>% as.numeric()
+    input_data$nolbu_brand <- ifelse(input_data$nolbu_delivery_rider_tpl == "이용", 1, 0) %>% as.numeric()
+    input_data$nolbu_brand <- ifelse(input_data$nolbu_delivery_rider_store == "이용", 1, 0) %>% as.numeric()
+    
     output$sfm_target_site_summary <- renderText({
 
       print(paste0("평가후보지:", input_data$nolbu_name,
-                   " | ", input_data$group,
+                   " | ", input_data$sv,
                    " | ", input_data$nolbu_brand,
                    " | ", input_data$nolbu_address,
                    " | ", "반경", input_data$nolbu_radius, "m", collapse=NULL))
     })
 
     # Collected SG BIZ data
-    input_data_final <- cbind(input_data, sgbiz_data) %>% as.data.frame()
+    input_data_final <- cbind.data.frame(input_data, sgbiz_data_new) %>% as.data.frame()
+    input_isotonized <- Isotonizer(jump_points_list, fitted_y_norm_list, input_data_final)
+    
+    x_inputs <- input_isotonized %>% select(model$beta@Dimnames[[1]]) %>% as.matrix()
 
     # Predict
-    pred_value <- predict(model, input_data_final)
+    pred_value <- predict(model, x_inputs)
     input_data_final$nolbu_sales_total <- pred_value
 
 
