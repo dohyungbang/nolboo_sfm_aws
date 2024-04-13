@@ -285,20 +285,43 @@ Collector <- function(address, radius){
     strsplit(" ") %>%
     .[[1]][4]
   
+  ### 아파트 동 수
   region_aptdong_n <- remDr$findElement(using = "xpath", "//*[@id='page5']/div[7]/table/tbody/tr[1]")$getElementText() %>%
     gsub(" ", " ", .) %>%
     strsplit(" ") %>%
     .[[1]][6]
   
+  ### 아파트 호 수
   region_aptho_n <- remDr$findElement(using = "xpath", "//*[@id='page5']/div[7]/table/tbody/tr[1]")$getElementText() %>%
     gsub(" ", " ", .) %>%
     strsplit(" ") %>%
     .[[1]][7]
   
+  ### 아파트 면적 별 수
   region_area_n <- remDr$findElement(using = "xpath", "//*[@id='page5']/div[9]/table/tbody/tr[1]")$getElementText() %>%
     gsub(" ", " ", .) %>%
     strsplit(" ") %>%
     .[[1]][2:length(.[[1]])]
+  
+  ### 시설 현황
+  element <- remDr$findElement(using = "xpath", "//*[@id='page5']/div[12]/table/tbody/tr[1]")
+  region_facility <- strsplit(element$getElementText()[[1]], " ")[[1]][-1]
+  
+  element <- remDr$findElement(using = "xpath", "//*[@id='page5']/div[13]/table/tbody/tr[1]")
+  region_school <- strsplit(element$getElementText()[[1]], " ")[[1]][-1]
+  
+  ### 지하철역/버스정류장
+  tryCatch({
+    element <- remDr$findElement(using = "xpath", "//*[@id='page5']/div[17]/table/tbody/tr[1]")
+    region_subway_bus <- strsplit(element$getElementText()[[1]], " ")[[1]]
+    region_subway_n <- region_subway_bus[2]
+    region_bus_n <- region_subway_bus[3]
+  }, error = function(e) {
+    element <- remDr$findElement(using = "xpath", "//*[@id='page5']/div[16]/table/tbody/tr[1]")
+    region_subway_bus <- strsplit(element$getElementText()[[1]], " ")[[1]]
+    region_subway_n <- region_subway_bus[2]
+    region_bus_n <- region_subway_bus[3]
+  })
   
   each_row <- c(last_month, store_n, sales_amt, sales_n, sales_day_amt, sales_day_n_ratio,
                 sales_time_amt, sales_time_n_ratio, sales_age_amt, sales_age_n_ratio,
