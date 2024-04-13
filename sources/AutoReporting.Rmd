@@ -1,0 +1,384 @@
+---
+title: "**출점후보지 매출예측결과 리포트**"
+date: "***`r paste0(lubridate::year(Sys.Date()), '년 ', lubridate::month(Sys.Date()), '월 ', lubridate::day(Sys.Date()), '일')`***"
+mainfont: NanumGothic
+output:
+  # pdf_document:
+  #   latex_engine: xelatex
+  html_document:
+    df_print: paged
+    theme: yeti
+    highlight: tango
+params:
+  data: NULL
+---
+ 
+```{r, include=FALSE, message=FALSE, warning=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(kableExtra)
+library(gridExtra)
+library(plotly)
+library(lubridate)
+
+data <- params$data %>% as.data.frame()
+attach(data)
+calCAGR <- function(x) {p <- length(x); yrs <- p-1; PV <- x[1]; FV <- x[p]; ((FV/PV)^(1/yrs)-1)}
+```
+<br>
+<br>
+
+## **1. 후보지**
+<br>
+
+#### **-후보지 이름:** `r data$nolbu_name`
+#### **-후보지 주소:** `r data$nolbu_address`
+#### **-후보지 목표반경:** `r data$nolbu_radius`미터
+#### **-후보지 목표 브랜드:** `r data$nolbu_brand`
+#### **-후보지 기본정보:** 
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+t1 <- data.frame(`변수명` = c("홀 면적(평방미터)", "주방 면적(평방미터)", 
+                           "테이블 수(개)", "좌석 수(개)", "매장층 수(층)", 
+                           "건물전체 층 수(층)", "주차가능 여부(1=가능; 0=불가능)"),
+           `입력값`= c(data$nolbu_store_area_hall, data$nolbu_store_area_kitchen, data$nolbu_store_table, 
+                      data$nolbu_store_chair, data$nolbu_store_floor, data$nolbu_bldg_floor, data$nolbu_bldg_parking))
+
+t2 <- data.frame(`변수명` = c("일 평균 영업시간(시간)", "월 평균 영업일수(일)", 
+                        "예상 직원 수 - 풀타임(명)", "예상직원 수 - 파트타임(명)", 
+                        "배달대행 (1=이용; 0=이용안함)", "직접배달 (1=이용; 0=이용안함)",
+                        "예상 월 임대료(원)"),
+                 `입력값` = c(data$nolbu_store_oper_time, data$nolbu_store_oper_day, data$nolbu_store_emp_full, 
+                             data$nolbu_store_emp_part, data$nolbu_delivery_rider_tpl, data$nolbu_delivery_rider_store, 
+                             data$nolbu_rent))
+
+kable(t1, "html") %>%
+  kable_styling(full_width = F, position = "center", font_size = 14) %>%
+  column_spec(1, width = "18em") %>% 
+  column_spec(2, width = "10em") %>% 
+  kable_styling(position = "float_left")
+
+kable(t2, "html") %>%
+  kable_styling(full_width = F, position = "center", font_size = 14) %>%
+  column_spec(1, width = "18em") %>% 
+  column_spec(2, width = "10em") %>%
+  kable_styling(position = "left")
+```
+
+---
+
+## **2. 매출예측결과**
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+diff <- round(data$nolbu_sales_total/10 - data$sgbiz_sales_amt_avg, digit = 2)
+sales_df <- 
+  data.frame(label = c("후보지 예상 매출액(만원)", "상권 내 동종업체 월 평균 매출액(만원)"),
+             value = c(data$nolbu_sales_total/10, data$sgbiz_sales_amt_avg)) %>% 
+  mutate(value_str = paste(formatC(round(value, digit = 1), big.mark = ","), "만원"))
+```
+
+### **분석결과:**
+#### <span style="color: blue; line-height: 1.5;"> ***목표 후보지의 예상 매출액은 `r sales_df$value_str[1]` 입니다. ***
+#### <span style="color: blue; line-height: 1.5;"> ***상권 내 동일업종 대비 목표 후보지의 월 평균 매출액이 `r ifelse(diff > 0, paste0(formatC(diff, big.mark = ","), "(만원) 높습니다."), paste0(formatC(abs(diff), big.mark = ","), "(만원) 낮습니다."))` ***
+
+<br>
+
+```{r, echo=FALSE, message=FALSE, fig.width=12, fig.height=4}
+ggplot(sales_df, aes(x = label, y = value, fill = label)) + 
+  geom_bar(stat = "identity") +
+  ggtitle("후보지 월 평균 매출액 및 상권 내 동종 업체 평균 매출액 비교") + 
+  geom_text(aes(label = value_str), stat = "identity", vjust = 2, size = 5) + 
+  theme(legend.position = "none",
+        plot.title = element_text(size = 20, colour = "black", face = "bold"),
+        panel.background = element_rect(fill="white"),
+        panel.grid.major.y = element_line(colour = "grey", linetype="dashed"),
+        axis.text.x = element_text(size = 17, colour = "black", angle =),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.title.x = element_blank(), 
+        axis.title.y = element_blank(), 
+        ) 
+```
+
+<br>
+
+---
+
+## **3. 상권정보 요약**
+### **1) 최근 13개월 상권 내 동종업체 수 추이**
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+year_mon_labels <- format(c(ym(last_month) - months(12:1), ym(last_month)), "%Y년 %m월")
+store_n_trend <- 
+  data.frame(label = 1:13,
+             label_str = year_mon_labels,
+             value = data[,paste0("sgbiz_store_n_", 1:13)] %>% as.numeric()) %>% 
+  mutate(value_str = paste(formatC(value, big.mark = ","), "개"))
+```
+
+### **분석결과:**
+#### <span style="color: blue; line-height: 1.5;"> ***해당 상권의 최근 13개월 간 동일업종 업체 수는 `r ifelse(calCAGR(store_n_trend$value) > 0, "증가", "감소")`추세이며, `r year_mon_labels[13]` 기준으로 `r store_n_trend$value[13]`개 입니다.***
+
+<br>
+
+```{r, echo=FALSE, message=FALSE, fig.width=12, fig.height=4}
+ggplot(store_n_trend, aes(x = label, y = value)) + 
+  geom_line() + 
+  geom_point() + 
+  xlab(" ") +
+  ylab(" ") + 
+  ylim(0, max(store_n_trend$value)*1.2) +
+  scale_x_continuous(breaks = 1:13, labels = store_n_trend$label_str) +
+  geom_text(size = 5, aes(label = value_str), stat = "identity", vjust = 2) + 
+  theme(legend.position = "none",
+        panel.background = element_rect(fill="white"),
+        panel.grid.major.y = element_line(colour = "grey", linetype="dashed"),
+        axis.text.x = element_text(size = 13, colour = "black", angle = 45, vjust = 0.5),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.title.x = element_blank(), 
+        axis.title.y = element_blank()
+        ) 
+```
+
+<br>
+ 
+### **2) 가구 및 인구 분포**
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+pop_df <- 
+  data.frame(label = c("일 평균 유동인구(명)", "목표반경 내 주거인구(명)", 
+                       "목표반경 내 직장인구(명)", "목표반경 내 가구 수(가구)"),
+             value = c(sgbiz_pop_fl_13, sgbiz_pop_res_3, sgbiz_pop_work_3, sgbiz_region_household_n)) %>% 
+  mutate(value_str = c(paste(formatC(c(sgbiz_pop_fl_13, sgbiz_pop_res_3, sgbiz_pop_work_3), big.mark = ","), "명"),
+                       paste(formatC(sgbiz_region_household_n, big.mark = ","), "가구")))
+```
+
+
+### **분석결과:**
+#### <span style="color: blue; line-height: 1.5;"> ***목표반경 내 가구 수는 `r formatC(data$sgbiz_region_household_n, big.mark = ",")`가구, 주거인구는  `r formatC(data$sgbiz_pop_res_3, big.mark = ",")`명, 직장인구는  `r formatC(data$sgbiz_pop_work_3, big.mark = ",")`명, 일 평균 유동인구는  `r formatC(data$sgbiz_pop_fl_13, big.mark = ",")`명 입니다.***
+
+<br>
+
+```{r, echo=FALSE, message=FALSE, fig.width=12, fig.height=4}
+ggplot(pop_df, aes(x = label, y = value, fill = label)) + 
+  geom_bar(stat = "identity") +
+  ggtitle("목표반경 내 가구 수 및 주거인구/직장인구/유동인구 수(명)") + 
+  geom_text(aes(size = 5, label = value_str), stat = "identity", vjust = 2) + 
+  theme(legend.position = "none",
+        panel.background = element_rect(fill="white"),
+        plot.title = element_text(size = 20, colour = "black", face = "bold"),
+        panel.grid.major.y = element_line(colour = "grey", linetype="dashed"),
+        axis.text.x = element_text(size = 17, colour = "black", angle =),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.title.x = element_blank(), 
+        axis.title.y = element_blank()
+        ) 
+```
+
+<br>
+   
+### **3) 성별/나이별 유동인구 비중**
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+pop_sex_ratio <- 
+  data.frame(label = c("남성", "여성"),
+           value = c(round(data$sgbiz_pop_fl_male/(data$sgbiz_pop_fl_male + data$sgbiz_pop_fl_female)*100, digit = 1), 
+                     round(data$sgbiz_pop_fl_female/(data$sgbiz_pop_fl_male + data$sgbiz_pop_fl_female)*100, digit = 1))) %>% 
+  mutate(value_str = paste0(label, "\n(", value, " %)"))
+
+total_fl <- sum(data %>% select(sgbiz_pop_fl_age_1:sgbiz_pop_fl_age_6))
+
+pop_age_ratio <- 
+  data.frame(label = c("10대", "20대", "30대", "40대", "50대", "60대 이상"),
+           value = c(round(data$sgbiz_pop_fl_age_1/total_fl*100, digit = 1), 
+                     round(data$sgbiz_pop_fl_age_2/total_fl*100, digit = 1),
+                     round(data$sgbiz_pop_fl_age_3/total_fl*100, digit = 1),
+                     round(data$sgbiz_pop_fl_age_4/total_fl*100, digit = 1),
+                     round(data$sgbiz_pop_fl_age_5/total_fl*100, digit = 1),
+                     round(data$sgbiz_pop_fl_age_6/total_fl*100, digit = 1))
+           ) %>% 
+  mutate(value_str = paste0(label, "\n(", value, " %)"))
+```
+
+### **분석결과:**
+#### <span style="color: blue; line-height: 1.5;"> ***성별 유동인구는 남성이 `r pop_sex_ratio$value[1]`%, 여성이 `r pop_sex_ratio$value[2]`%이며, 연령대별 유동인구는 10대가 `r pop_age_ratio$value[1]`%, 20대가 `r pop_age_ratio$value[2]`%, 30대가 `r pop_age_ratio$value[3]`%, 40대가 `r pop_age_ratio$value[4]`%, 50대가 `r pop_age_ratio$value[5]`%, 그리고 60대 이상이 `r pop_age_ratio$value[6]`%로 분포하는 것으로 나타났습니다.***
+
+<br>
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=12, fig.height=6}
+p1 <-
+  ggplot(pop_sex_ratio, aes(x = "", y = value, fill = label)) + 
+  geom_bar(stat = "identity", width = 1, color = "white", linewidth = 0.8) +
+  coord_polar("y", start=0) +
+  ggtitle("성별 유동인구 비중(%)") + 
+  geom_text(aes(label = value_str), stat = "identity",
+            position = position_stack(vjust=0.5), size = 5) + 
+  theme(legend.position = "none",
+        plot.title = element_text(size = 20, colour = "black", face = "bold"),
+        panel.background = element_rect(fill="white"),
+        panel.grid.major.y = element_blank(),
+        axis.text.x = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.title.x = element_blank(), 
+        axis.title.y = element_blank()
+        )
+
+p2 <-
+  ggplot(pop_age_ratio, aes(x = "", y = value, fill = label)) + 
+  geom_bar(stat = "identity", width = 1, color = "white", linewidth = 0.8) +
+  coord_polar("y", start=0) +
+  ggtitle("연령대별 유동인구 비중(%)") + 
+  geom_text(aes(label = value_str), stat = "identity",
+            position = position_stack(vjust=0.5), size = 5) + 
+  theme(legend.position = "none",
+        plot.title = element_text(size = 20, colour = "black", face = "bold"),
+        panel.background = element_rect(fill="white"),
+        panel.grid.major.y = element_blank(),
+        axis.text.x = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.title.x = element_blank(), 
+        axis.title.y = element_blank()
+        )
+
+grid.arrange(p1, p2, ncol=2)
+```
+
+<br>
+
+### **4) 요일별 유동인구 분포** 
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+pop_fl_day <- 
+  data.frame(label = c("월요일", "화요일", "수요일", "목요일", "금요일", "토요일", "일요일"),
+           value = c(sgbiz_pop_fl_day_1,sgbiz_pop_fl_day_2,sgbiz_pop_fl_day_3,sgbiz_pop_fl_day_4,
+                     sgbiz_pop_fl_day_5,sgbiz_pop_fl_day_6,sgbiz_pop_fl_day_7)
+           ) %>% 
+  mutate(value_str = paste(formatC(value, big.mark = ","), "명"))
+```
+
+### **분석결과:**
+#### <span style="color: blue; line-height: 1.5;"> ***해당 상권의 요일별 유동인구는 `r pop_fl_day[which.max(pop_fl_day$value), "label"]`이 `r pop_fl_day[which.max(pop_fl_day$value), "value_str"]`으로 가장 많은 것으로 나타났습니다.***
+
+<br>
+```{r, echo=FALSE, message=FALSE, fig.width=12, fig.height=4}
+ggplot(pop_fl_day, aes(x = label, y = value, fill = label)) + 
+  geom_bar(stat = "identity") +
+  ggtitle("요일별 유동인구 수(명)") + 
+  geom_text(aes(label = value_str), stat = "identity", vjust = 2, size=6) + 
+  theme(legend.position = "none",
+        panel.background = element_rect(fill="white"),
+        panel.grid.major.y = element_line(colour = "grey", linetype="dashed"),
+        plot.title = element_text(size = 20, colour = "black", face = "bold"),
+        axis.text.x = element_text(size = 17, colour = "black"),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.title.x = element_blank(), 
+        axis.title.y = element_blank()
+        ) 
+```
+
+<br>
+
+### **5) 주요시간대별 유동인구 분포**
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+pop_fl_time <- 
+  data.frame(label = c("00~06시", "06~11시", "11~14시", "14~17시", "17~21시", "21~24시"),
+           value = c(sgbiz_pop_fl_time_1, sgbiz_pop_fl_time_2, sgbiz_pop_fl_time_3, 
+                     sgbiz_pop_fl_time_4, sgbiz_pop_fl_time_5, sgbiz_pop_fl_time_6)
+           ) %>% 
+  mutate(value_str = paste(formatC(value, big.mark = ","), "명"))
+```
+
+### **분석결과:**
+#### <span style="color: blue; line-height: 1.5;"> ***해당 상권의 주요 시간대별 유동인구는 `r pop_fl_time[which.max(pop_fl_time$value), "label"]`가 `r pop_fl_time[which.max(pop_fl_time$value), "value_str"]`으로 가장 많은 것으로 나타났습니다.***
+
+<br>
+```{r, echo=FALSE, message=FALSE, fig.width=12, fig.height=4}
+ggplot(pop_fl_time, aes(x = label, y = value, fill = label)) + 
+  geom_bar(stat = "identity") +
+  ggtitle("시간대별 유동인구 수(명)") + 
+  geom_text(aes(label = value_str), stat = "identity", vjust = 2, size=6) + 
+  theme(legend.position = "none",
+        panel.background = element_rect(fill="white"),
+        panel.grid.major.y = element_line(colour = "grey", linetype="dashed"),
+        plot.title = element_text(size = 20, colour = "black", face = "bold"),
+        axis.text.x = element_text(size = 17, colour = "black"),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.title.x = element_blank(), 
+        axis.title.y = element_blank()
+        ) 
+```
+
+<br>
+
+### **6) 상권구매력**
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+pop_income_exp <- 
+  data.frame(label = c("남성", "여성", "남성", "여성", "남성", "여성", "남성", "여성"),
+             category = rep(c("주거인구 - 소득", "주거인구 - 소비", "직장인구 - 소득", "직장인구 - 소비"), each = 2),
+             value = c(sgbiz_income_res_male, sgbiz_income_res_female, sgbiz_exp_res_male, sgbiz_exp_res_female,
+                       sgbiz_income_work_male, sgbiz_income_work_female, sgbiz_exp_work_male, sgbiz_exp_work_female)
+           ) %>% 
+  mutate(value_str = paste(formatC(value, big.mark = ","), "백만원"))
+```
+
+### **분석결과:**
+#### <span style="color: blue; line-height: 1.5;"> ***해당 상권의 주거인구 월 평균 소득은 남성이 `r pop_income_exp$value_str[1]`, 여성이  `r pop_income_exp$value_str[2]`이며, 월 평균 소비액은 남성이 `r pop_income_exp$value_str[3]`, 여성이  `r pop_income_exp$value_str[4]`입니다.***
+#### <span style="color: blue; line-height: 1.5;"> ***해당 상권의 직장인구 월 평균 소득은 남성이 `r pop_income_exp$value_str[5]`, 여성이  `r pop_income_exp$value_str[6]`이며, 월 평균 소비액은 남성이 `r pop_income_exp$value_str[7]`, 여성이  `r pop_income_exp$value_str[8]`입니다.***
+
+<br>
+```{r, echo=FALSE, message=FALSE, fig.width=12, fig.height=4}
+ggplot(pop_income_exp, aes(x = label, y = value, fill = label)) + 
+  facet_wrap(~category, nrow = 1) + 
+  geom_bar(stat = "identity") +
+  xlab(" ") +
+  ggtitle("주거 및 직장인구 소득/소비") + 
+  geom_text(aes(label = value_str), stat = "identity", vjust = 2, size=6) + 
+  theme(legend.position = "none",
+        panel.background = element_rect(fill="white"),
+        panel.grid.major.y = element_line(colour = "grey", linetype="dashed"),
+        plot.title = element_text(size = 20, colour = "black", face = "bold"),
+        axis.text.x = element_text(size = 15, colour = "black"),
+        axis.text.y = element_blank(),
+        strip.text = element_text(size = 15, colour = "black"),
+        axis.ticks.y = element_blank(),
+        axis.title.x = element_blank(), 
+        axis.title.y = element_blank()
+        ) 
+```
+
+<br>
+
+### **7) 상권 배후시설 정보** 
+
+<br>
+```{r, echo=FALSE, message=FALSE}
+
+t1 <- data.frame(`시설구분` = c("공공기관", "금융기관", "의료/복지시설", "학교", "대형유통시설"),
+                 `개수`= c(data$sgbiz_region_facility_1, data$sgbiz_region_facility_2, 
+                  data$sgbiz_region_facility_3, data$sgbiz_region_facility_4, data$sgbiz_region_facility_5))
+
+t2 <- data.frame(`시설구분` = c("문화시설", "숙박시설", "지하철역", "버스정류장"),
+                 `개수` = c(data$sgbiz_region_facility_6, data$sgbiz_region_facility_7, data$sgbiz_subway_n, data$sgbiz_bus_n))
+
+kable(t1, "html") %>%
+  kable_styling(full_width = F, position = "center", font_size = 14) %>%
+  column_spec(1, width = "18em") %>% 
+  column_spec(2, width = "10em") %>% 
+  kable_styling(position = "float_left")
+
+kable(t2, "html") %>%
+  kable_styling(full_width = F, position = "center", font_size = 14) %>%
+  column_spec(1, width = "18em") %>%
+  column_spec(2, width = "10em") %>% 
+  kable_styling(position = "left")
+```
+
