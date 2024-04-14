@@ -98,7 +98,7 @@ kakao_post_code_api <-
            ),
            column(4,
                   div(class = "align-top",
-                      selectInput("sfm_input_radius", h4(strong("목표 반경 (미터):")), choices = c(seq(100, 1500,by=100)) )
+                      selectInput("sfm_input_radius", h4(strong("목표 반경 (미터):")), choices = c(seq(500, 1500,by=100)) )
                   )
            )
          ),
@@ -202,39 +202,39 @@ sfm_body <- tabItem(
                  color ="black",
                  fluidRow(
                    column(12,
-                          h3(strong(uiOutput(outputId = "sfm_target_site_summary_spinner")))
+                          h3(strong(withSpinner(textOutput(outputId = "sfm_target_site_summary"))))
                    )
                  ),
                  fluidRow(
                    column(12,
                           div(class = "narrow-value-box",
-                              uiOutput("sfm_output_area_hall_spinner", width=3),
-                              uiOutput("sfm_output_area_kitchen_spinner", width=3),
-                              uiOutput("sfm_output_ntable_spinner", width=3),
-                              uiOutput("sfm_output_nchair_spinner", width=3))
+                              withSpinner(valueBoxOutput("sfm_output_area_hall", width=3)),
+                              withSpinner(valueBoxOutput("sfm_output_area_kitchen", width=3)),
+                              withSpinner(valueBoxOutput("sfm_output_ntable", width=3)),
+                              withSpinner(valueBoxOutput("sfm_output_nchair", width=3)))
                    )
                  ),
                  fluidRow(
                    column(12,
-                          uiOutput("sfm_output_floor_store_spinner", width=3),
-                          uiOutput("sfm_output_floor_bldg_spinner", width=3),
-                          uiOutput("sfm_output_opertime_spinner", width=3),
-                          uiOutput("sfm_output_operday_spinner", width=3)
+                          withSpinner(valueBoxOutput("sfm_output_floor_store", width=3)),
+                          withSpinner(valueBoxOutput("sfm_output_floor_bldg", width=3)),
+                          withSpinner(valueBoxOutput("sfm_output_opertime", width=3)),
+                          withSpinner(valueBoxOutput("sfm_output_operday", width=3))
                    )
                    
                  ),
                  fluidRow(
                    column(12,
-                          uiOutput("sfm_output_parking_spinner", width=3),
-                          uiOutput("sfm_output_emp_full_spinner", width=3),
-                          uiOutput("sfm_output_emp_part_spinner", width=3),
-                          uiOutput("sfm_output_rentcost_spinner", width=3))
+                          withSpinner(valueBoxOutput("sfm_output_parking", width=3)),
+                          withSpinner(valueBoxOutput("sfm_output_emp_full", width=3)),
+                          withSpinner(valueBoxOutput("sfm_output_emp_part", width=3)),
+                          withSpinner(valueBoxOutput("sfm_output_rentcost", width=3)))
                  ),
                  
                  fluidRow(
                    column(12,
-                          uiOutput("sfm_output_del_tpl_spinner", width=3),
-                          uiOutput("sfm_output_del_store_spinner", width=3)
+                          withSpinner(valueBoxOutput("sfm_output_del_tpl", width=3)),
+                          withSpinner(valueBoxOutput("sfm_output_del_store", width=3))
                    )
                  )
                  
@@ -248,11 +248,11 @@ sfm_body <- tabItem(
                  color="black",
                  fluidRow(
                    column(7,
-                          uiOutput("sfm_pred_plot_spinner")
+                          withSpinner(plotlyOutput("sfm_pred_plot"))
                    ),
                    column(5,
-                          strong(uiOutput("sfm_pred_text1_spinner")),
-                          strong(uiOutput("sfm_pred_text2_spinner")),
+                          strong(withSpinner(textOutput("sfm_pred_text1"))),
+                          strong(withSpinner(textOutput("sfm_pred_text2"))),
                           style="font-size: 20px;"
                    )
                  )
@@ -269,7 +269,7 @@ sfm_body <- tabItem(
                  h3(strong('동종 업체 수 추이')),
                  fluidRow(
                    column(12,
-                          uiOutput("sfm_sgbiz_store_trend_spinner")
+                          withSpinner(plotlyOutput("sfm_sgbiz_store_trend"))
                    )
                  ),
                  tags$hr(),
@@ -277,7 +277,7 @@ sfm_body <- tabItem(
                  h3(strong('상권 내 가구 및 인구분포')),
                  fluidRow(
                    column(12,
-                          uiOutput("sfm_sgbiz_pop_spinner")
+                          withSpinner(plotlyOutput("sfm_sgbiz_pop"))
                    )
                  ),
                  tags$hr(),
@@ -285,39 +285,40 @@ sfm_body <- tabItem(
                  h3(strong('성별/나이별 유동인구 비중')),
                  fluidRow(
                    column(6,
-                          uiOutput("sfm_sgbiz_fl_sex_ratio_spinner")),
+                          withSpinner(plotlyOutput("sfm_sgbiz_fl_sex_ratio"))),
                    column(6,
-                          uiOutput("sfm_sgbiz_fl_age_ratio_spinner"))
+                          withSpinner(plotlyOutput("sfm_sgbiz_fl_age_ratio")))
                  ),
                  tags$hr(),
                  
                  h3(strong('요일별 유동인구 분포')),
                  fluidRow(
                    column(12,
-                          uiOutput("sfm_sgbiz_fl_day_spinner"))
+                          withSpinner(plotlyOutput("sfm_sgbiz_fl_day")))
                  ),
                  tags$hr(),
                  
                  h3(strong('시간대별 유동인구 분포')),
                  fluidRow(
                    column(12,
-                          uiOutput("sfm_sgbiz_fl_time_spinner"))
+                          withSpinner(plotlyOutput("sfm_sgbiz_fl_time")))
                  ),
                  tags$hr(),
                  
                  h3(strong('상권구매력')),
                  fluidRow(
                    column(12,
-                          uiOutput("sfm_sgbiz_incomeexp_spinner"))
+                          withSpinner(plotlyOutput("sfm_sgbiz_incomeexp"))
+                   )
                  ),
                  tags$hr(),
                  
                  h3(strong('상권 배후시설 특성')),
                  fluidRow(
                    column(6,
-                          uiOutput("sfm_sgbiz_fac_table1_spinner")),
+                          withSpinner(tableOutput("sfm_sgbiz_fac_table1"))),
                    column(6,
-                          uiOutput("sfm_sgbiz_fac_table2_spinner"))
+                          withSpinner(tableOutput("sfm_sgbiz_fac_table2")))
                  )
                  
                )
@@ -390,11 +391,42 @@ server <- function(input, output, session) {
   
   observeEvent(input$sfm_run_button, {
     
-    input_data_final <- NULL
+    # Invalidate previous outputs to show spinners
+    output$sfm_target_site_summary <- renderText({ invalidateLater(100, session); NULL })
+    output$sfm_output_area_hall <- renderValueBox({ withSpinner(NULL) })
+    output$sfm_output_area_kitchen <- renderValueBox({ withSpinner(NULL) })
+    output$sfm_output_ntable <- renderValueBox({ withSpinner(NULL) })
+    output$sfm_output_nchair <- renderValueBox({ withSpinner(NULL) })
+    output$sfm_output_floor_store <- renderValueBox({ withSpinner(NULL) })
+    output$sfm_output_floor_bldg <- renderValueBox({ withSpinner(NULL) })
+    output$sfm_output_opertime <- renderValueBox({ withSpinner(NULL) })
+    output$sfm_output_operday <- renderValueBox({ withSpinner(NULL) })
+    output$sfm_output_parking <- renderValueBox({ withSpinner(NULL) })
+    output$sfm_output_emp_full <- renderValueBox({ withSpinner(NULL) })
+    output$sfm_output_emp_part <- renderValueBox({ withSpinner(NULL) })
+    output$sfm_output_rentcost <- renderValueBox({ withSpinner(NULL) })
+    output$sfm_output_del_tpl <- renderValueBox({ withSpinner(NULL) })
+    output$sfm_output_del_store <- renderValueBox({ withSpinner(NULL) })
+    output$sfm_pred_plot <- renderPlotly({ withSpinner(NULL) })
+    output$sfm_pred_text1 <- renderText({ withSpinner(NULL) })
+    output$sfm_pred_text2 <- renderText({ withSpinner(NULL) })
+    output$sfm_sgbiz_store_trend <- renderPlotly({ withSpinner(NULL) })
+    output$sfm_sgbiz_pop <- renderPlotly({ withSpinner(NULL) })
+    output$sfm_sgbiz_fl_sex_ratio <- renderPlotly({ withSpinner(NULL) })
+    output$sfm_sgbiz_fl_age_ratio <- renderPlotly({ withSpinner(NULL) })
+    output$sfm_sgbiz_fl_day <- renderPlotly({ withSpinner(NULL) })
+    output$sfm_sgbiz_fl_time <- renderPlotly({ withSpinner(NULL) })
+    output$sfm_sgbiz_incomeexp <- renderPlotly({ withSpinner(NULL) })
+    output$sfm_sgbiz_fac_table1 <- renderTable({ withSpinner(NULL) })
+    output$sfm_sgbiz_fac_table2 <- renderTable({ withSpinner(NULL) })
+    
+    # Delay processing to allow UI to update
+    invalidateLater(200, session)
+    
     sgbiz_data <- ExtractData(input$roadAddress, input$sfm_input_radius)
     sgbiz_data_new <- DataProcessor(sgbiz_data, sgbiz_var_lists)
     seoul <- ifelse(str_detect(input$roadAddress, "서울"), 1, 0)
-
+    
     # Input Page
     input_data <- data.frame(nolbu_name = input$sfm_input_name,
                              sv = input$sfm_input_sv,
@@ -418,104 +450,113 @@ server <- function(input, output, session) {
                              nolbu_delivery_rider_tpl = input$sfm_input_del_tpl,
                              nolbu_delivery_rider_store = input$sfm_input_del_store
     )
-
+    
     input_data$nolbu_brand <- ifelse(input_data$nolbu_brand == "부대 단독형", 1, 0) %>% as.numeric()
     input_data$nolbu_bldg_parking <- ifelse(input_data$nolbu_bldg_parking == "가능", 1, 0) %>% as.numeric()
     input_data$nolbu_delivery_rider_tpl <- ifelse(input_data$nolbu_delivery_rider_tpl == "이용", 1, 0) %>% as.numeric()
     input_data$nolbu_delivery_rider_store <- ifelse(input_data$nolbu_delivery_rider_store == "이용", 1, 0) %>% as.numeric()
     
     output$sfm_target_site_summary <- renderText({
-
+      
       print(paste0("평가후보지: ", input_data$nolbu_name,
                    " | ", ifelse(input_data$nolbu_brand == 1, "부대 단독형", "부대보쌈 통합형"),
                    " | ", input_data$nolbu_address,
                    " | ", "반경 ", input_data$nolbu_radius, "m", collapse=NULL))
     })
-
+    
     # Collected SG BIZ data
     input_data_final <- cbind.data.frame(input_data, sgbiz_data_new) %>% as.data.frame()
     input_isotonized <- Isotonizer(jump_points_list, fitted_y_norm_list, input_data_final)
     
     x_inputs <- input_isotonized %>% select(model$beta@Dimnames[[1]]) %>% as.matrix()
-
+    
     # Predict
     pred_value <- predict(model, x_inputs)
     input_data_final$nolbu_sales_total <- pred_value
     
     #### --- VALUE BOX --- ####
-    output$sfm_output_area_hall_spinner <- renderUI({ withSpinner(valueBoxOutput("sfm_output_area_hall", width=3)) })
-    
     output$sfm_output_area_hall <- renderValueBox({
+      
       valueBox(input_data_final$nolbu_store_area_hall, "홀 면적(m2)", color="blue")
     })
     
-    output$sfm_output_area_kitchen_spinner <- renderUI({ withSpinner(valueBoxOutput("sfm_output_area_kitchen", width=3)) })
     output$sfm_output_area_kitchen <- renderValueBox({
+      
       valueBox(input_data_final$nolbu_store_area_kitchen, "주방 면적(m2)", color="blue")
+      
     })
     
-    output$sfm_output_ntable_spinner <- renderUI({ withSpinner(valueBoxOutput("sfm_output_ntable", width=3)) })
     output$sfm_output_ntable <- renderValueBox({
+      
       valueBox(input_data_final$nolbu_store_table, "테이블 수(개)", color="blue")
     })
     
-    output$sfm_output_nchair_spinner <- renderUI({ withSpinner(valueBoxOutput("sfm_output_nchair", width=3)) })
     output$sfm_output_nchair <- renderValueBox({
+      
       valueBox(input_data_final$nolbu_store_chair, "좌석 수 (개)", color="blue")
+      
     })
     
-    output$sfm_output_floor_store_spinner <- renderUI({ withSpinner(valueBoxOutput("sfm_output_floor_store", width=3)) })
     output$sfm_output_floor_store <- renderValueBox({
+      
       valueBox(input_data_final$nolbu_store_floor, "후보지 층수(층)", color="orange")
+      
     })
     
-    output$sfm_output_floor_bldg_spinner <- renderUI({ withSpinner(valueBoxOutput("sfm_output_floor_bldg", width=3)) })
     output$sfm_output_floor_bldg <- renderValueBox({
+      
       valueBox(input_data_final$nolbu_bldg_floor, "건물 총 층수(층)", color="orange")
+      
     })
     
-    output$sfm_output_opertime_spinner <- renderUI({ withSpinner(valueBoxOutput("sfm_output_opertime", width=3)) })
     output$sfm_output_opertime <- renderValueBox({
+      
       valueBox(input_data_final$nolbu_store_oper_time, "일 평균 운영시간(시간)", color="orange")
+      
     })
     
-    output$sfm_output_operday_spinner <- renderUI({ withSpinner(valueBoxOutput("sfm_output_operday", width=3)) })
     output$sfm_output_operday <- renderValueBox({
+      
       valueBox(input_data_final$nolbu_store_oper_day, "월 평균 운영일수(일)", color="orange")
+      
     })
     
-    output$sfm_output_parking_spinner <- renderUI({ withSpinner(valueBoxOutput("sfm_output_parking", width=3)) })
     output$sfm_output_parking <- renderValueBox({
+      
       valueBox(ifelse(input_data_final$nolbu_bldg_parking==1, "가능", "불가능"), "주차가능 여부", color="olive")
+      
     })
     
-    output$sfm_output_emp_full_spinner <- renderUI({ withSpinner(valueBoxOutput("sfm_output_emp_full", width=3)) })
     output$sfm_output_emp_full <- renderValueBox({
+      
       valueBox(input_data_final$nolbu_store_emp_full, "풀타임 직원 수(명)", color="olive")
+      
     })
     
-    output$sfm_output_emp_part_spinner <- renderUI({ withSpinner(valueBoxOutput("sfm_output_emp_part", width=3)) })
     output$sfm_output_emp_part <- renderValueBox({
+      
       valueBox(input_data_final$nolbu_store_emp_part, "파트타임 직원 수 (명)", color="olive")
+      
     })
     
-    output$sfm_output_rentcost_spinner <- renderUI({ withSpinner(valueBoxOutput("sfm_output_rentcost", width=3)) })
     output$sfm_output_rentcost <- renderValueBox({
+      
       valueBox(formatC(input_data_final$nolbu_rent, big.mark = ","), "예상 월 임대료(만원)", color="olive")
+      
     })
     
-    output$sfm_output_del_tpl_spinner <- renderUI({ withSpinner(valueBoxOutput("sfm_output_del_tpl", width=3)) })
     output$sfm_output_del_tpl <- renderValueBox({
+      
       valueBox(ifelse(input_data_final$nolbu_delivery_rider_tpl==1, "이용", "미이용"), "배달대행 이용여부", color="purple")
+      
     })
     
-    output$sfm_output_del_store_spinner <- renderUI({ withSpinner(valueBoxOutput("sfm_output_del_store", width=3)) })
     output$sfm_output_del_store <- renderValueBox({
+      
       valueBox(ifelse(input_data_final$nolbu_delivery_rider_store==1, "직접배달", "직접배달 안함"), "직접배달 여부", color="purple")
+      
     })
     
-    
-    output$sfm_pred_plot_spinner <- renderUI({ withSpinner(plotlyOutput("sfm_pred_plot")) })
     output$sfm_pred_plot <- renderPlotly({
       
       sales_df <-
@@ -540,7 +581,6 @@ server <- function(input, output, session) {
       
     })
     
-    output$sfm_pred_text1_spinner <- renderUI({ withSpinner(textOutput("sfm_pred_text1")) })
     output$sfm_pred_text1 <- renderText({
       
       diff <- input_data_final$nolbu_sales_total/10 - input_data_final$sgbiz_sales_amt_avg
@@ -551,7 +591,6 @@ server <- function(input, output, session) {
       
     })
     
-    output$sfm_pred_text2_spinner <- renderUI({ withSpinner(textOutput("sfm_pred_text2")) })
     output$sfm_pred_text2 <- renderText({
       
       diff <- input_data_final$nolbu_sales_total/10 - input_data_final$sgbiz_sales_amt_avg
@@ -562,7 +601,6 @@ server <- function(input, output, session) {
       
     })
     
-    output$sfm_sgbiz_store_trend_spinner <- renderUI({ withSpinner(plotlyOutput("sfm_sgbiz_store_trend")) })
     output$sfm_sgbiz_store_trend <- renderPlotly({
       
       year_mon_labels <- format(c(ym(input_data_final$store_last_month) - months(12:1), ym(input_data_final$store_last_month)), "%Y년 %m월")
@@ -592,7 +630,6 @@ server <- function(input, output, session) {
       
     })
     
-    output$sfm_sgbiz_pop_spinner <- renderUI({ withSpinner(plotlyOutput("sfm_sgbiz_pop")) })
     output$sfm_sgbiz_pop <- renderPlotly({
       
       pop_df <-
@@ -622,7 +659,6 @@ server <- function(input, output, session) {
       
     })
     
-    output$sfm_sgbiz_fl_sex_ratio_spinner <- renderUI({ withSpinner(plotlyOutput("sfm_sgbiz_fl_sex_ratio")) })
     output$sfm_sgbiz_fl_sex_ratio <- renderPlotly({
       
       pop_sex_ratio <-
@@ -646,7 +682,6 @@ server <- function(input, output, session) {
       
     })
     
-    output$sfm_sgbiz_fl_age_ratio_spinner <- renderUI({ withSpinner(plotlyOutput("sfm_sgbiz_fl_age_ratio")) })
     output$sfm_sgbiz_fl_age_ratio <- renderPlotly({
       
       total_fl <- sum(input_data_final %>% select(sgbiz_pop_fl_age_1:sgbiz_pop_fl_age_6))
@@ -677,7 +712,6 @@ server <- function(input, output, session) {
       
     })
     
-    output$sfm_sgbiz_fl_day_spinner <- renderUI({ withSpinner(plotlyOutput("sfm_sgbiz_fl_day")) })
     output$sfm_sgbiz_fl_day <- renderPlotly({
       
       pop_fl_day <-
@@ -705,7 +739,6 @@ server <- function(input, output, session) {
       
     })
     
-    output$sfm_sgbiz_fl_time_spinner <- renderUI({ withSpinner(plotlyOutput("sfm_sgbiz_fl_time")) })
     output$sfm_sgbiz_fl_time <- renderPlotly({
       
       pop_fl_time <-
@@ -735,7 +768,6 @@ server <- function(input, output, session) {
       
     })
     
-    output$sfm_sgbiz_incomeexp_spinner <- renderUI({ withSpinner(plotlyOutput("sfm_sgbiz_incomeexp")) })
     output$sfm_sgbiz_incomeexp <- renderPlotly({
       
       pop_income_exp <-
@@ -771,7 +803,6 @@ server <- function(input, output, session) {
       
     })
     
-    output$sfm_sgbiz_fac_table1_spinner <- renderUI({ withSpinner(tableOutput("sfm_sgbiz_fac_table1")) })
     output$sfm_sgbiz_fac_table1 <- renderTable({
       
       data.frame(`시설구분` = c("공공기관", "금융기관", "의료/복지시설", "학교", "대형유통시설"),
@@ -783,7 +814,6 @@ server <- function(input, output, session) {
       
     }, width = "100%")
     
-    output$sfm_sgbiz_fac_table2_spinner <- renderUI({ withSpinner(tableOutput("sfm_sgbiz_fac_table2")) })
     output$sfm_sgbiz_fac_table2 <- renderTable({
       
       data.frame(`시설구분` = c("문화시설", "숙박시설", "지하철역", "버스정류장"),
@@ -824,7 +854,7 @@ server <- function(input, output, session) {
                           envir = new.env(parent = globalenv()))
       }
     )
-
+    
   })
   
 }  

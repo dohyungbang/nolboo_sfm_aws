@@ -84,7 +84,7 @@ def ExtractData(address, radius):
         time.sleep(30)
 
         driver.find_element("css selector", "#menu2").click()
-        time.sleep(1)
+        time.sleep(5)
 
         ### store Last month
         store_last_month = driver.find_element(By.XPATH, "//*[@id='page2']/div[3]/table/thead/tr/th[15]").text
@@ -94,7 +94,7 @@ def ExtractData(address, radius):
 
         ## 매출분석
         driver.find_element("css selector", "#menu3").click()
-        time.sleep(1)
+        time.sleep(5)
 
         ### sales Last month
         sales_last_month = driver.find_element(By.XPATH, "//*[@id='page3']/div[3]/table/thead/tr/th[15]").text
@@ -117,7 +117,7 @@ def ExtractData(address, radius):
 
         ## 인구분석
         driver.find_element("css selector", "#menu4").click()
-        time.sleep(1)
+        time.sleep(5)
 
         ### 유동인구
         pop_fl = driver.find_element(By.XPATH, "//*[@id='page4']/div[3]/table/tbody/tr[1]").text.split(" ")[2:]
@@ -192,7 +192,7 @@ def ExtractData(address, radius):
 
         ## 지역현황
         driver.find_element("css selector", "#menu5").click()
-        time.sleep(1)
+        time.sleep(5)
 
         ### 세대 수
         region_household_n = driver.find_element(By.XPATH, "//*[@id='page5']/div[3]/table/tbody/tr[1]").text.split(" ")[4]
@@ -202,8 +202,11 @@ def ExtractData(address, radius):
 
         region_aptdong_n = driver.find_element(By.XPATH, "//*[@id='page5']/div[7]/table/tbody/tr[1]").text.split(" ")[5]
         region_aptho_n = driver.find_element(By.XPATH, "//*[@id='page5']/div[7]/table/tbody/tr[1]").text.split(" ")[6]
-
+        
         region_area_n = driver.find_element(By.XPATH, "//*[@id='page5']/div[9]/table/tbody/tr[1]").text.split(" ")[1:]
+        if len(region_area_n) == 0:
+            region_area_n = [0,0,0,0,0]
+          
 
         ### 시설 현황
 
