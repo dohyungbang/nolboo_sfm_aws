@@ -1,6 +1,6 @@
 # --- SETTING --- #
 .packages = c("shiny", "shinymanager", "shinyjs", "shinydashboard", "shinycssloaders",
-              "dplyr", "lubridate", "sysfonts", "plotly", "stringr", "RSelenium", "glmnet", "reticulate")
+              "dplyr", "lubridate", "sysfonts", "plotly", "stringr", "glmnet", "reticulate")
 
 .inst <- .packages %in% installed.packages()
 if(length(.packages[!.inst]) > 0) install.packages(.packages[!.inst])
