@@ -1,9 +1,3 @@
-library(readr)
-library(dplyr)
-library(tidyr)
-library(xlsx)
-library(stringr)
-  
 Isotonizer <- function(jump_points_list, fitted_y_norm_list, data){
   
   target_var_lists <- names(jump_points_list)

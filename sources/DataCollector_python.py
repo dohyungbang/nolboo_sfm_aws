@@ -5,12 +5,11 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 
 chrome_options = Options()
-chrome_options.add_argument("--headless")  # Run Chrome in headless mode, without a GUI.
-chrome_options.add_argument("--no-sandbox")  # Bypass OS security model; often necessary in Docker.
-chrome_options.add_argument("--disable-dev-shm-usage")  # Overcome limited resource problems.
 chrome_options.add_argument("--disable-gpu")  # Disable GPU hardware acceleration; not needed for headless.
 
 def ExtractData(address, radius):
+  
+    radius = int(radius)
     
     driver = webdriver.Chrome(options = chrome_options)
     driver.get("https://sso.sbiz.or.kr/sso/subLoginAction.do?joinSite=SG&reqSite=https://sg.sbiz.or.kr/godo/index.sg#")
@@ -258,6 +257,7 @@ def ExtractData(address, radius):
         each_row.append(region_bus_n)
 
         target_row = pd.DataFrame(each_row)
+        print(target_row)
         
         driver.close()
         return target_row

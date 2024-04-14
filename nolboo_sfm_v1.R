@@ -573,7 +573,7 @@ server <- function(input, output, session) {
 
     output$sfm_sgbiz_store_trend <- renderPlotly({
 
-      year_mon_labels <- format(c(ym(input_data_final$last_month) - months(12:1), ym(input_data_final$last_month)), "%Y년 %m월")
+      year_mon_labels <- format(c(ym(input_data_final$store_last_month) - months(12:1), ym(input_data_final$store_last_month)), "%Y년 %m월")
       store_n_trend <-
         data.frame(label = 1:13,
                    label_str = year_mon_labels,
