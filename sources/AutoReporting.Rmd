@@ -35,7 +35,7 @@ calCAGR <- function(x) {p <- length(x); yrs <- p-1; PV <- x[1]; FV <- x[p]; ((FV
 #### **-후보지 이름:** `r data$nolbu_name`
 #### **-후보지 주소:** `r data$nolbu_address`
 #### **-후보지 목표반경:** `r data$nolbu_radius`미터
-#### **-후보지 목표 브랜드:** `r data$nolbu_brand`
+#### **-후보지 목표 브랜드:** `r ifelse(data$nolbu_brand == 1, "부대 단독형", "부대보쌈 통합형")`
 #### **-후보지 기본정보:** 
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
@@ -151,13 +151,13 @@ pop_df <-
   data.frame(label = c("일 평균 유동인구(명)", "목표반경 내 주거인구(명)", 
                        "목표반경 내 직장인구(명)", "목표반경 내 가구 수(가구)"),
              value = c(sgbiz_pop_fl_13, sgbiz_pop_res_3, sgbiz_pop_work_3, sgbiz_region_household_n)) %>% 
-  mutate(value_str = c(paste(formatC(c(sgbiz_pop_fl_13, sgbiz_pop_res_3, sgbiz_pop_work_3), big.mark = ","), "명"),
-                       paste(formatC(sgbiz_region_household_n, big.mark = ","), "가구")))
+  mutate(value_str = c(paste(formatC(c(sgbiz_pop_fl_13, sgbiz_pop_res_3, sgbiz_pop_work_3), format = "f", big.mark = ","), "명"),
+                       paste(formatC(sgbiz_region_household_n, format = "f", big.mark = ","), "가구")))
 ```
 
 
 ### **분석결과:**
-#### <span style="color: blue; line-height: 1.5;"> ***목표반경 내 가구 수는 `r formatC(data$sgbiz_region_household_n, big.mark = ",")`가구, 주거인구는  `r formatC(data$sgbiz_pop_res_3, big.mark = ",")`명, 직장인구는  `r formatC(data$sgbiz_pop_work_3, big.mark = ",")`명, 일 평균 유동인구는  `r formatC(data$sgbiz_pop_fl_13, big.mark = ",")`명 입니다.***
+#### <span style="color: blue; line-height: 1.5;"> ***목표반경 내 가구 수는 `r formatC(data$sgbiz_region_household_n, format = "f", big.mark = ",")`가구, 주거인구는  `r formatC(data$sgbiz_pop_res_3, format = "f", big.mark = ",")`명, 직장인구는  `r formatC(data$sgbiz_pop_work_3, format = "f", big.mark = ",")`명, 일 평균 유동인구는  `r formatC(data$sgbiz_pop_fl_13, format = "f", big.mark = ",")`명 입니다.***
 
 <br>
 
@@ -257,7 +257,7 @@ pop_fl_day <-
            value = c(sgbiz_pop_fl_day_1,sgbiz_pop_fl_day_2,sgbiz_pop_fl_day_3,sgbiz_pop_fl_day_4,
                      sgbiz_pop_fl_day_5,sgbiz_pop_fl_day_6,sgbiz_pop_fl_day_7)
            ) %>% 
-  mutate(value_str = paste(formatC(value, big.mark = ","), "명"))
+  mutate(value_str = paste(formatC(value, format = "f", big.mark = ","), "명"))
 ```
 
 ### **분석결과:**
@@ -291,7 +291,7 @@ pop_fl_time <-
            value = c(sgbiz_pop_fl_time_1, sgbiz_pop_fl_time_2, sgbiz_pop_fl_time_3, 
                      sgbiz_pop_fl_time_4, sgbiz_pop_fl_time_5, sgbiz_pop_fl_time_6)
            ) %>% 
-  mutate(value_str = paste(formatC(value, big.mark = ","), "명"))
+  mutate(value_str = paste(formatC(value, format = "f", big.mark = ","), "명"))
 ```
 
 ### **분석결과:**

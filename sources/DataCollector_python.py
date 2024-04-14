@@ -5,9 +5,11 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 
 chrome_options = Options()
-chrome_options.add_argument("--headless=new")  # Enable headless mode
-chrome_options.add_argument("--disable-gpu")  # Disable GPU hardware acceleration; not needed for headless.
-chrome_options.add_argument("--window-size=1920,1080")  # Optional, but it can help avoid some issues.
+chrome_options.add_argument('--no-sandbox')  # Bypass OS security model
+chrome_options.add_argument('--disable-dev-shm-usage')  # Overcome limited resource problems
+chrome_options.add_argument('--headless=new')  # Run in headless mode
+chrome_options.add_argument('--disable-gpu')  # Disable GPU hardware acceleration
+chrome_options.add_argument('--remote-debugging-port=9222')  # This is sometimes necessary
 
 def ExtractData(address, radius):
   

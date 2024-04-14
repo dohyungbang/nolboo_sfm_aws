@@ -202,44 +202,44 @@ sfm_body <- tabItem(
                  color ="black",
                  fluidRow(
                    column(12,
-                          h3(strong(textOutput(outputId = "sfm_target_site_summary")))
-                     )
+                          h3(strong(uiOutput(outputId = "sfm_target_site_summary_spinner")))
+                   )
                  ),
                  fluidRow(
                    column(12,
                           div(class = "narrow-value-box",
-                          withSpinner(valueBoxOutput("sfm_output_area_hall", width=3)),
-                          valueBoxOutput("sfm_output_area_kitchen", width=3),
-                          valueBoxOutput("sfm_output_ntable", width=3),
-                          valueBoxOutput("sfm_output_nchair", width=3))
-                          )
+                              uiOutput("sfm_output_area_hall_spinner", width=3),
+                              uiOutput("sfm_output_area_kitchen_spinner", width=3),
+                              uiOutput("sfm_output_ntable_spinner", width=3),
+                              uiOutput("sfm_output_nchair_spinner", width=3))
+                   )
                  ),
                  fluidRow(
                    column(12,
-                          valueBoxOutput("sfm_output_floor_store", width=3),
-                          valueBoxOutput("sfm_output_floor_bldg", width=3),
-                          valueBoxOutput("sfm_output_opertime", width=3),
-                          valueBoxOutput("sfm_output_operday", width=3)
-                          )
-
+                          uiOutput("sfm_output_floor_store_spinner", width=3),
+                          uiOutput("sfm_output_floor_bldg_spinner", width=3),
+                          uiOutput("sfm_output_opertime_spinner", width=3),
+                          uiOutput("sfm_output_operday_spinner", width=3)
+                   )
+                   
                  ),
                  fluidRow(
                    column(12,
-                          withSpinner(valueBoxOutput("sfm_output_parking", width=3)),
-                          valueBoxOutput("sfm_output_emp_full", width=3),
-                          valueBoxOutput("sfm_output_emp_part", width=3),
-                          valueBoxOutput("sfm_output_rentcost", width=3))
-                   ),
-
+                          uiOutput("sfm_output_parking_spinner", width=3),
+                          uiOutput("sfm_output_emp_full_spinner", width=3),
+                          uiOutput("sfm_output_emp_part_spinner", width=3),
+                          uiOutput("sfm_output_rentcost_spinner", width=3))
+                 ),
+                 
                  fluidRow(
                    column(12,
-                          valueBoxOutput("sfm_output_del_tpl", width=3),
-                          valueBoxOutput("sfm_output_del_store", width=3)
-                          )
-               )
-
-             ),
-
+                          uiOutput("sfm_output_del_tpl_spinner", width=3),
+                          uiOutput("sfm_output_del_store_spinner", width=3)
+                   )
+                 )
+                 
+               ),
+               
                # --- PREDICTION RESULT --- #
                box(
                  title= strong("매출예측결과"),
@@ -248,17 +248,17 @@ sfm_body <- tabItem(
                  color="black",
                  fluidRow(
                    column(7,
-                          withSpinner(plotlyOutput("sfm_pred_plot"))
-                          ),
+                          uiOutput("sfm_pred_plot_spinner")
+                   ),
                    column(5,
-                          strong(withSpinner(textOutput("sfm_pred_text1"))),
-                          strong(textOutput("sfm_pred_text2")),
+                          strong(uiOutput("sfm_pred_text1_spinner")),
+                          strong(uiOutput("sfm_pred_text2_spinner")),
                           style="font-size: 20px;"
-                          )
+                   )
                  )
                ),
-
-
+               
+               
                # --- SANGKWON DATA SUMMARY --- #
                box(
                  title= strong("상권 및 경쟁정보 요약"),
@@ -269,7 +269,7 @@ sfm_body <- tabItem(
                  h3(strong('동종 업체 수 추이')),
                  fluidRow(
                    column(12,
-                          withSpinner(plotlyOutput("sfm_sgbiz_store_trend"))
+                          uiOutput("sfm_sgbiz_store_trend_spinner")
                    )
                  ),
                  tags$hr(),
@@ -277,7 +277,7 @@ sfm_body <- tabItem(
                  h3(strong('상권 내 가구 및 인구분포')),
                  fluidRow(
                    column(12,
-                          withSpinner(plotlyOutput("sfm_sgbiz_pop"))
+                          uiOutput("sfm_sgbiz_pop_spinner")
                    )
                  ),
                  tags$hr(),
@@ -285,40 +285,39 @@ sfm_body <- tabItem(
                  h3(strong('성별/나이별 유동인구 비중')),
                  fluidRow(
                    column(6,
-                          withSpinner(plotlyOutput("sfm_sgbiz_fl_sex_ratio"))),
+                          uiOutput("sfm_sgbiz_fl_sex_ratio_spinner")),
                    column(6,
-                          withSpinner(plotlyOutput("sfm_sgbiz_fl_age_ratio")))
-                   ),
+                          uiOutput("sfm_sgbiz_fl_age_ratio_spinner"))
+                 ),
                  tags$hr(),
                  
                  h3(strong('요일별 유동인구 분포')),
                  fluidRow(
                    column(12,
-                          withSpinner(plotlyOutput("sfm_sgbiz_fl_day")))
-                   ),
+                          uiOutput("sfm_sgbiz_fl_day_spinner"))
+                 ),
                  tags$hr(),
                  
                  h3(strong('시간대별 유동인구 분포')),
                  fluidRow(
                    column(12,
-                          withSpinner(plotlyOutput("sfm_sgbiz_fl_time")))
-                   ),
+                          uiOutput("sfm_sgbiz_fl_time_spinner"))
+                 ),
                  tags$hr(),
                  
                  h3(strong('상권구매력')),
                  fluidRow(
                    column(12,
-                          withSpinner(plotlyOutput("sfm_sgbiz_incomeexp"))
-                          )
+                          uiOutput("sfm_sgbiz_incomeexp_spinner"))
                  ),
                  tags$hr(),
                  
                  h3(strong('상권 배후시설 특성')),
                  fluidRow(
                    column(6,
-                          withSpinner(tableOutput("sfm_sgbiz_fac_table1"))),
+                          uiOutput("sfm_sgbiz_fac_table1_spinner")),
                    column(6,
-                          withSpinner(tableOutput("sfm_sgbiz_fac_table2")))
+                          uiOutput("sfm_sgbiz_fac_table2_spinner"))
                  )
                  
                )
@@ -388,9 +387,10 @@ server <- function(input, output, session) {
   observeEvent(session$input$logout,{
     session$reload()
   })
-
+  
   observeEvent(input$sfm_run_button, {
-
+    
+    input_data_final <- NULL
     sgbiz_data <- ExtractData(input$roadAddress, input$sfm_input_radius)
     sgbiz_data_new <- DataProcessor(sgbiz_data, sgbiz_var_lists)
     seoul <- ifelse(str_detect(input$roadAddress, "서울"), 1, 0)
@@ -441,98 +441,88 @@ server <- function(input, output, session) {
     # Predict
     pred_value <- predict(model, x_inputs)
     input_data_final$nolbu_sales_total <- pred_value
-
-
+    
     #### --- VALUE BOX --- ####
+    output$sfm_output_area_hall_spinner <- renderUI({ withSpinner(valueBoxOutput("sfm_output_area_hall", width=3)) })
+    
     output$sfm_output_area_hall <- renderValueBox({
-
       valueBox(input_data_final$nolbu_store_area_hall, "홀 면적(m2)", color="blue")
     })
-
+    
+    output$sfm_output_area_kitchen_spinner <- renderUI({ withSpinner(valueBoxOutput("sfm_output_area_kitchen", width=3)) })
     output$sfm_output_area_kitchen <- renderValueBox({
-
       valueBox(input_data_final$nolbu_store_area_kitchen, "주방 면적(m2)", color="blue")
-
     })
-
+    
+    output$sfm_output_ntable_spinner <- renderUI({ withSpinner(valueBoxOutput("sfm_output_ntable", width=3)) })
     output$sfm_output_ntable <- renderValueBox({
-
       valueBox(input_data_final$nolbu_store_table, "테이블 수(개)", color="blue")
     })
-
+    
+    output$sfm_output_nchair_spinner <- renderUI({ withSpinner(valueBoxOutput("sfm_output_nchair", width=3)) })
     output$sfm_output_nchair <- renderValueBox({
-
       valueBox(input_data_final$nolbu_store_chair, "좌석 수 (개)", color="blue")
-
     })
-
+    
+    output$sfm_output_floor_store_spinner <- renderUI({ withSpinner(valueBoxOutput("sfm_output_floor_store", width=3)) })
     output$sfm_output_floor_store <- renderValueBox({
-
       valueBox(input_data_final$nolbu_store_floor, "후보지 층수(층)", color="orange")
-
     })
-
+    
+    output$sfm_output_floor_bldg_spinner <- renderUI({ withSpinner(valueBoxOutput("sfm_output_floor_bldg", width=3)) })
     output$sfm_output_floor_bldg <- renderValueBox({
-
       valueBox(input_data_final$nolbu_bldg_floor, "건물 총 층수(층)", color="orange")
-
     })
-
+    
+    output$sfm_output_opertime_spinner <- renderUI({ withSpinner(valueBoxOutput("sfm_output_opertime", width=3)) })
     output$sfm_output_opertime <- renderValueBox({
-
       valueBox(input_data_final$nolbu_store_oper_time, "일 평균 운영시간(시간)", color="orange")
-
     })
-
+    
+    output$sfm_output_operday_spinner <- renderUI({ withSpinner(valueBoxOutput("sfm_output_operday", width=3)) })
     output$sfm_output_operday <- renderValueBox({
-
       valueBox(input_data_final$nolbu_store_oper_day, "월 평균 운영일수(일)", color="orange")
-
     })
-
+    
+    output$sfm_output_parking_spinner <- renderUI({ withSpinner(valueBoxOutput("sfm_output_parking", width=3)) })
     output$sfm_output_parking <- renderValueBox({
-
       valueBox(ifelse(input_data_final$nolbu_bldg_parking==1, "가능", "불가능"), "주차가능 여부", color="olive")
-
     })
-
+    
+    output$sfm_output_emp_full_spinner <- renderUI({ withSpinner(valueBoxOutput("sfm_output_emp_full", width=3)) })
     output$sfm_output_emp_full <- renderValueBox({
-
       valueBox(input_data_final$nolbu_store_emp_full, "풀타임 직원 수(명)", color="olive")
-
     })
-
+    
+    output$sfm_output_emp_part_spinner <- renderUI({ withSpinner(valueBoxOutput("sfm_output_emp_part", width=3)) })
     output$sfm_output_emp_part <- renderValueBox({
-
       valueBox(input_data_final$nolbu_store_emp_part, "파트타임 직원 수 (명)", color="olive")
-
     })
-
+    
+    output$sfm_output_rentcost_spinner <- renderUI({ withSpinner(valueBoxOutput("sfm_output_rentcost", width=3)) })
     output$sfm_output_rentcost <- renderValueBox({
-
       valueBox(formatC(input_data_final$nolbu_rent, big.mark = ","), "예상 월 임대료(만원)", color="olive")
-
     })
-
+    
+    output$sfm_output_del_tpl_spinner <- renderUI({ withSpinner(valueBoxOutput("sfm_output_del_tpl", width=3)) })
     output$sfm_output_del_tpl <- renderValueBox({
-
       valueBox(ifelse(input_data_final$nolbu_delivery_rider_tpl==1, "이용", "미이용"), "배달대행 이용여부", color="purple")
-
     })
-
+    
+    output$sfm_output_del_store_spinner <- renderUI({ withSpinner(valueBoxOutput("sfm_output_del_store", width=3)) })
     output$sfm_output_del_store <- renderValueBox({
-
       valueBox(ifelse(input_data_final$nolbu_delivery_rider_store==1, "직접배달", "직접배달 안함"), "직접배달 여부", color="purple")
-
     })
-
+    
+    
+    output$sfm_pred_plot_spinner <- renderUI({ withSpinner(plotlyOutput("sfm_pred_plot")) })
     output$sfm_pred_plot <- renderPlotly({
-
+      
       sales_df <-
         data.frame(label = c("후보지 예상 매출액(만원)", "상권 내 동종업체 매출액(만원)"),
                    value = c(input_data_final$nolbu_sales_total/10, input_data_final$sgbiz_sales_amt_avg)) %>%
         mutate(value_str = paste(formatC(round(value, digits = 1), big.mark = ","), "만원"))
-
+      
       ggplot(sales_df, aes(x = label, y = value, fill = label)) +
         geom_bar(stat = "identity") +
         ggtitle("후보지 및 상권 내 동종업체 월 평균 예상 매출액 비교") +
@@ -547,38 +537,41 @@ server <- function(input, output, session) {
               axis.title.x = element_blank(),
               axis.title.y = element_blank(),
         )
-
+      
     })
-
+    
+    output$sfm_pred_text1_spinner <- renderUI({ withSpinner(textOutput("sfm_pred_text1")) })
     output$sfm_pred_text1 <- renderText({
-
+      
       diff <- input_data_final$nolbu_sales_total/10 - input_data_final$sgbiz_sales_amt_avg
-
+      
       paste0("- 목표 후보지의 예상 매출액은 ",
              formatC(input_data_final$nolbu_sales_total/10, big.mark = ","),
              "만원 입니다. ")
-
+      
     })
     
+    output$sfm_pred_text2_spinner <- renderUI({ withSpinner(textOutput("sfm_pred_text2")) })
     output$sfm_pred_text2 <- renderText({
-
+      
       diff <- input_data_final$nolbu_sales_total/10 - input_data_final$sgbiz_sales_amt_avg
-
+      
       paste0("- 목표 후보지의 예상 매출액은 상권 평균 대비 ",
              formatC(abs(diff), big.mark = ","),
              "만원", ifelse(diff > 0, " 높습니다.", " 낮습니다."))
-
+      
     })
-
+    
+    output$sfm_sgbiz_store_trend_spinner <- renderUI({ withSpinner(plotlyOutput("sfm_sgbiz_store_trend")) })
     output$sfm_sgbiz_store_trend <- renderPlotly({
-
+      
       year_mon_labels <- format(c(ym(input_data_final$store_last_month) - months(12:1), ym(input_data_final$store_last_month)), "%Y년 %m월")
       store_n_trend <-
         data.frame(label = 1:13,
                    label_str = year_mon_labels,
                    value = input_data_final[,paste0("sgbiz_store_n_", 1:13)] %>% as.numeric) %>%
         mutate(value_str = paste(formatC(value, big.mark = ","), "개"))
-
+      
       ggplot(store_n_trend, aes(x = label, y = value)) +
         geom_line() +
         geom_point() +
@@ -586,7 +579,7 @@ server <- function(input, output, session) {
         ylab(" ") +
         ylim(0, max(store_n_trend$value)*1.2) +
         scale_x_continuous(breaks = 1:13, labels = store_n_trend$label_str) +
-        geom_text(size = 5, aes(label = value_str), position = position_nudge(y = 2), stat = "identity") +
+        geom_text(size = 5, aes(label = value_str), position = position_nudge(y = 1), stat = "identity") +
         theme(legend.position = "none",
               panel.background = element_rect(fill="white"),
               panel.grid.major.y = element_line(colour = "grey", linetype="dashed"),
@@ -596,42 +589,12 @@ server <- function(input, output, session) {
               axis.title.x = element_blank(),
               axis.title.y = element_blank()
         )
-
+      
     })
-
+    
+    output$sfm_sgbiz_pop_spinner <- renderUI({ withSpinner(plotlyOutput("sfm_sgbiz_pop")) })
     output$sfm_sgbiz_pop <- renderPlotly({
-
-      pop_df <-
-        data.frame(label = c("일 평균 유동인구(명)", "목표반경 내 주거인구(명)",
-                             "목표반경 내 직장인구(명)", "목표반경 내 가구 수(가구)"),
-                   value = c(input_data_final$sgbiz_pop_fl_13,
-                             input_data_final$sgbiz_pop_res_3,
-                             input_data_final$sgbiz_pop_work_3,
-                             input_data_final$sgbiz_region_household_n)) %>%
-        mutate(value_str = c(paste(formatC(c(input_data_final$sgbiz_pop_fl_13,
-                                             input_data_final$sgbiz_pop_res_3,
-                                             input_data_final$sgbiz_pop_work_3), scientific = F, big.mark = ","), "명"),
-                             paste(formatC(input_data_final$sgbiz_region_household_n, scientific = F, big.mark = ","), "가구")))
-
-      ggplot(pop_df, aes(x = label, y = value, fill = label)) +
-        geom_bar(stat = "identity") +
-        ggtitle("목표반경 내 가구 수 및 주거인구/직장인구/유동인구 수(명)") +
-        geom_text(aes(size = 5, label = value_str), stat = "identity") +
-        theme(legend.position = "none",
-              panel.background = element_rect(fill="white"),
-              plot.title = element_text(size = 13, colour = "black", face = "bold"),
-              panel.grid.major.y = element_line(colour = "grey", linetype="dashed"),
-              axis.text.x = element_text(size = 13, colour = "black", face = "bold"),
-              axis.text.y = element_blank(),
-              axis.ticks.y = element_blank(),
-              axis.title.x = element_blank(),
-              axis.title.y = element_blank()
-        )
-
-    })
-
-    output$sfm_sgbiz_pop <- renderPlotly({
-
+      
       pop_df <-
         data.frame(label = c("일 평균 유동인구(명)", "목표반경 내 주거인구(명)",
                              "목표반경 내 직장인구(명)", "목표반경 내 가구 수(가구)"),
@@ -639,9 +602,9 @@ server <- function(input, output, session) {
                              input_data_final$sgbiz_pop_work_3, input_data_final$sgbiz_region_household_n)) %>%
         mutate(value_str = c(paste(formatC(c(input_data_final$sgbiz_pop_fl_13,
                                              input_data_final$sgbiz_pop_res_3,
-                                             input_data_final$sgbiz_pop_work_3), scientific = F, big.mark = ","), "명"),
-                             paste(formatC(input_data_final$sgbiz_region_household_n, scientific = F, big.mark = ","), "가구")))
-
+                                             input_data_final$sgbiz_pop_work_3), digit = 0, format = "f", big.mark = ","), "명"),
+                             paste(formatC(input_data_final$sgbiz_region_household_n, digit = 0, format = "f", big.mark = ","), "가구")))
+      
       ggplot(pop_df, aes(x = label, y = value, fill = label)) +
         geom_bar(stat = "identity") +
         ggtitle("목표반경 내 가구 수 (가구) 및 주거인구/직장인구/유동인구 수(명)") +
@@ -656,17 +619,18 @@ server <- function(input, output, session) {
               axis.title.x = element_blank(),
               axis.title.y = element_blank()
         )
-
+      
     })
-
+    
+    output$sfm_sgbiz_fl_sex_ratio_spinner <- renderUI({ withSpinner(plotlyOutput("sfm_sgbiz_fl_sex_ratio")) })
     output$sfm_sgbiz_fl_sex_ratio <- renderPlotly({
-
+      
       pop_sex_ratio <-
         data.frame(label = c("남성", "여성"),
                    value = c(round(input_data_final$sgbiz_pop_fl_male/(input_data_final$sgbiz_pop_fl_male + input_data_final$sgbiz_pop_fl_female)*100, digits = 1),
                              round(input_data_final$sgbiz_pop_fl_female/(input_data_final$sgbiz_pop_fl_male + input_data_final$sgbiz_pop_fl_female)*100, digits = 1))) %>%
         mutate(value_str = paste0(label, "\n(", value, " %)"))
-
+      
       plot_ly(pop_sex_ratio, labels = ~label, values = ~value, type = 'pie',
               textposition = 'inside',
               textinfo = 'label+percent',
@@ -679,13 +643,14 @@ server <- function(input, output, session) {
                xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
                yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
                margin = list(t = 50))
-
+      
     })
-
+    
+    output$sfm_sgbiz_fl_age_ratio_spinner <- renderUI({ withSpinner(plotlyOutput("sfm_sgbiz_fl_age_ratio")) })
     output$sfm_sgbiz_fl_age_ratio <- renderPlotly({
-
+      
       total_fl <- sum(input_data_final %>% select(sgbiz_pop_fl_age_1:sgbiz_pop_fl_age_6))
-
+      
       pop_age_ratio <-
         data.frame(label = c("10대", "20대", "30대", "40대", "50대", "60대 이상"),
                    value = c(round(input_data_final$sgbiz_pop_fl_age_1/total_fl*100, digits = 1),
@@ -696,7 +661,7 @@ server <- function(input, output, session) {
                              round(input_data_final$sgbiz_pop_fl_age_6/total_fl*100, digits = 1))
         ) %>%
         mutate(value_str = paste0(label, "\n(", value, " %)"))
-
+      
       plot_ly(pop_age_ratio, labels = ~label, values = ~value, type = 'pie',
               textposition = 'inside',
               textinfo = 'label+percent',
@@ -709,11 +674,12 @@ server <- function(input, output, session) {
                xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
                yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
                margin = list(t = 50))
-
+      
     })
-
+    
+    output$sfm_sgbiz_fl_day_spinner <- renderUI({ withSpinner(plotlyOutput("sfm_sgbiz_fl_day")) })
     output$sfm_sgbiz_fl_day <- renderPlotly({
-
+      
       pop_fl_day <-
         data.frame(label = c("월요일", "화요일", "수요일", "목요일", "금요일", "토요일", "일요일"),
                    value = c(input_data_final$sgbiz_pop_fl_day_1, input_data_final$sgbiz_pop_fl_day_2,
@@ -721,8 +687,8 @@ server <- function(input, output, session) {
                              input_data_final$sgbiz_pop_fl_day_5, input_data_final$sgbiz_pop_fl_day_6,
                              input_data_final$sgbiz_pop_fl_day_7)
         ) %>%
-        mutate(value_str = paste(formatC(value, big.mark = ","), "명"))
-
+        mutate(value_str = paste(formatC(value, format = "f", digit = 0, big.mark = ","), "명"))
+      
       ggplot(pop_fl_day, aes(x = label, y = value, fill = label)) +
         geom_bar(stat = "identity") +
         geom_text(aes(label = value_str), stat = "identity", vjust = 2, size=5) +
@@ -736,11 +702,12 @@ server <- function(input, output, session) {
               axis.title.x = element_blank(),
               axis.title.y = element_blank()
         )
-
+      
     })
-
+    
+    output$sfm_sgbiz_fl_time_spinner <- renderUI({ withSpinner(plotlyOutput("sfm_sgbiz_fl_time")) })
     output$sfm_sgbiz_fl_time <- renderPlotly({
-
+      
       pop_fl_time <-
         data.frame(label = c("00~06시", "06~11시", "11~14시", "14~17시", "17~21시", "21~24시"),
                    value = c(input_data_final$sgbiz_pop_fl_time_1,
@@ -750,8 +717,8 @@ server <- function(input, output, session) {
                              input_data_final$sgbiz_pop_fl_time_5,
                              input_data_final$sgbiz_pop_fl_time_6)
         ) %>%
-        mutate(value_str = paste(formatC(value, scientific = F, big.mark = ","), "명"))
-
+        mutate(value_str = paste(formatC(value, format = "f", digit = 0, big.mark = ","), "명"))
+      
       ggplot(pop_fl_time, aes(x = label, y = value, fill = label)) +
         geom_bar(stat = "identity") +
         geom_text(aes(label = value_str), stat = "identity", vjust = 2, size=5) +
@@ -765,11 +732,12 @@ server <- function(input, output, session) {
               axis.title.x = element_blank(),
               axis.title.y = element_blank()
         )
-
+      
     })
-
+    
+    output$sfm_sgbiz_incomeexp_spinner <- renderUI({ withSpinner(plotlyOutput("sfm_sgbiz_incomeexp")) })
     output$sfm_sgbiz_incomeexp <- renderPlotly({
-
+      
       pop_income_exp <-
         data.frame(label = c("남성", "여성", "남성", "여성", "남성", "여성", "남성", "여성"),
                    category = rep(c("주거인구 - 소득", "주거인구 - 소비", "직장인구 - 소득", "직장인구 - 소비"), each = 2),
@@ -783,7 +751,7 @@ server <- function(input, output, session) {
                              input_data_final$sgbiz_exp_work_female)
         ) %>%
         mutate(value_str = paste(formatC(value, big.mark = ","), "백만원"))
-
+      
       ggplot(pop_income_exp, aes(x = label, y = value, fill = label)) +
         facet_wrap(~category, nrow = 1) +
         geom_bar(stat = "identity") +
@@ -800,34 +768,36 @@ server <- function(input, output, session) {
               axis.title.x = element_blank(),
               axis.title.y = element_blank()
         )
-
+      
     })
-
+    
+    output$sfm_sgbiz_fac_table1_spinner <- renderUI({ withSpinner(tableOutput("sfm_sgbiz_fac_table1")) })
     output$sfm_sgbiz_fac_table1 <- renderTable({
-
+      
       data.frame(`시설구분` = c("공공기관", "금융기관", "의료/복지시설", "학교", "대형유통시설"),
                  `개수`= c(input_data_final$sgbiz_region_facility_1,
                          input_data_final$sgbiz_region_facility_2,
                          input_data_final$sgbiz_region_facility_3,
                          input_data_final$sgbiz_region_facility_4,
                          input_data_final$sgbiz_region_facility_5))
-
+      
     }, width = "100%")
-
+    
+    output$sfm_sgbiz_fac_table2_spinner <- renderUI({ withSpinner(tableOutput("sfm_sgbiz_fac_table2")) })
     output$sfm_sgbiz_fac_table2 <- renderTable({
-
+      
       data.frame(`시설구분` = c("문화시설", "숙박시설", "지하철역", "버스정류장"),
                  `개수` = c(input_data_final$sgbiz_region_facility_6,
                           input_data_final$sgbiz_region_facility_7,
                           input_data_final$sgbiz_subway_n,
                           input_data_final$sgbiz_bus_n))
-
+      
     }, width = "100%")
-
-
+    
+    
     output$sfm_result_csv <- downloadHandler(
       filename = function() {
-
+        
         paste("nolboo_sfm_data_", input_data_final$nolbu_name, "_",
               format(Sys.time(), "%Y-%m-%d %H:%M:%S"), ".csv", sep="")
       },
@@ -835,18 +805,18 @@ server <- function(input, output, session) {
         write.csv.utf8.BOM(input_data_final, file)
       }
     )
-
-
+    
+    
     output$sfm_result_report <- downloadHandler(
-
+      
       filename <- function() {
-
+        
         paste('nolboo_sfm_report_', input_data_final$nolbu_name, "_",
               format(Sys.time(), "%Y-%m-%d %H:%M:%S"), '.html', sep='')
       },
-
+      
       content <- function(file) {
-
+        
         src <- normalizePath('sources/AutoReporting.Rmd')
         rmarkdown::render(src,
                           output_file = file,
@@ -856,7 +826,7 @@ server <- function(input, output, session) {
     )
 
   })
-
+  
 }  
 
 # --- RUN APP --- # 
