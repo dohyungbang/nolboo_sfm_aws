@@ -5,8 +5,10 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 
 chrome_options = Options()
-chrome_options.add_experimental_option("detach", True)
-chrome_options.add_argument("--disable-gpu")  # Recommended for compatibility
+chrome_options.add_argument("--headless")  # Run Chrome in headless mode, without a GUI.
+chrome_options.add_argument("--no-sandbox")  # Bypass OS security model; often necessary in Docker.
+chrome_options.add_argument("--disable-dev-shm-usage")  # Overcome limited resource problems.
+chrome_options.add_argument("--disable-gpu")  # Disable GPU hardware acceleration; not needed for headless.
 
 def ExtractData(address, radius):
     
@@ -39,7 +41,7 @@ def ExtractData(address, radius):
         try:
           driver.find_element("css selector", "#container > div:nth-child(1) > div:nth-child(3) > div.foot > a:nth-child(2)").click()
         except:
-            driver.find_element("css selector", "#container > div:nth-child(11) > div:nth-child(3) > div.foot > a:nth-child(2)").click()
+          driver.find_element("css selector", "#container > div:nth-child(11) > div:nth-child(3) > div.foot > a:nth-child(2)").click()
         time.sleep(5)
 
         # Select Upjong

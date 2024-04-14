@@ -123,7 +123,7 @@ sfm_body <- tabItem(
                  fluidRow(
                    column(4, textInput("sfm_input_name", "평가후보지 이름:")),
                    column(4, textInput("sfm_input_sv", "담당자명:")),
-                   column(4, selectInput("sfm_input_brand", "목표 브랜드: ", selected = "부대단독형", choices = c("부대단독형", "보쌈부대 통합형")))
+                   column(4, selectInput("sfm_input_brand", "목표 브랜드: ", choices = c("부대 단독형", "보쌈부대 통합형"), selected = "부대 단독형"))
                    
                  ),
                  tags$hr(),
@@ -391,7 +391,6 @@ server <- function(input, output, session) {
   observeEvent(input$sfm_run_button, {
 
     sgbiz_data <- ExtractData(input$roadAddress, input$sfm_input_radius)
-    sgbiz_data <- ExtractData(address, radius)
     sgbiz_data_new <- DataProcessor(sgbiz_data, sgbiz_var_lists)
     seoul <- ifelse(str_detect(input$roadAddress, "서울"), 1, 0)
 
@@ -420,17 +419,17 @@ server <- function(input, output, session) {
     )
 
     input_data$nolbu_brand <- ifelse(input_data$nolbu_brand == "부대 단독형", 1, 0) %>% as.numeric()
-    input_data$nolbu_brand <- ifelse(input_data$nolbu_bldg_parking == "가능", 1, 0) %>% as.numeric()
-    input_data$nolbu_brand <- ifelse(input_data$nolbu_delivery_rider_tpl == "이용", 1, 0) %>% as.numeric()
-    input_data$nolbu_brand <- ifelse(input_data$nolbu_delivery_rider_store == "이용", 1, 0) %>% as.numeric()
+    input_data$nolbu_bldg_parking <- ifelse(input_data$nolbu_bldg_parking == "가능", 1, 0) %>% as.numeric()
+    input_data$nolbu_delivery_rider_tpl <- ifelse(input_data$nolbu_delivery_rider_tpl == "이용", 1, 0) %>% as.numeric()
+    input_data$nolbu_delivery_rider_store <- ifelse(input_data$nolbu_delivery_rider_store == "이용", 1, 0) %>% as.numeric()
     
     output$sfm_target_site_summary <- renderText({
 
-      print(paste0("평가후보지:", input_data$nolbu_name,
+      print(paste0("평가후보지: ", input_data$nolbu_name,
                    " | ", input_data$sv,
-                   " | ", input_data$nolbu_brand,
+                   " | ", ifelse(input_data$nolbu_brand == 1, "부대 단독형", "부대보쌈 통합형"),
                    " | ", input_data$nolbu_address,
-                   " | ", "반경", input_data$nolbu_radius, "m", collapse=NULL))
+                   " | ", "반경 ", input_data$nolbu_radius, "m", collapse=NULL))
     })
 
     # Collected SG BIZ data
