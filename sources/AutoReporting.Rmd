@@ -3,8 +3,6 @@ title: "**출점후보지 매출예측결과 리포트**"
 date: "***`r paste0(lubridate::year(Sys.Date()), '년 ', lubridate::month(Sys.Date()), '월 ', lubridate::day(Sys.Date()), '일')`***"
 mainfont: NanumGothic
 output:
-  # pdf_document:
-  #   latex_engine: xelatex
   html_document:
     df_print: paged
     theme: yeti
@@ -33,6 +31,7 @@ calCAGR <- function(x) {p <- length(x); yrs <- p-1; PV <- x[1]; FV <- x[p]; ((FV
 ## **1. 후보지**
 <br>
 
+#### **-분석담당자:** `r data$sv`
 #### **-후보지 이름:** `r data$nolbu_name`
 #### **-후보지 주소:** `r data$nolbu_address`
 #### **-후보지 목표반경:** `r data$nolbu_radius`미터

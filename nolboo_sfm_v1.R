@@ -26,8 +26,8 @@ write.csv.utf8.BOM <- function(df, filename) {
 }
 
 credentials <- data.frame(
-  user = c("testuser1"),
-  password = c("test123"), stringsAsFactors = FALSE)
+  user = c("testuser1", "user_nolboo1"),
+  password = c("test123", "nolboo123"), stringsAsFactors = FALSE)
 
 # --- HEADER --- #
 Header <- dashboardHeader(
@@ -76,6 +76,7 @@ kakao_post_code_api <-
                 oncomplete: function(data) {
                     var roadAddr = data.roadAddress;
                     document.getElementById('sample4_roadAddress').value = roadAddr;
+                    
                     Shiny.setInputValue('roadAddress', roadAddr);
                     
                     document.getElementById('sample4_roadAddress').focus();
@@ -187,7 +188,7 @@ sfm_body <- tabItem(
              
              br(),
              fluidRow(
-               column(3, downloadButton("sfm_result_pdf", "report 다운로드(.pdf)")),
+               column(3, downloadButton("sfm_result_report", "report 다운로드(.html)")),
                column(3, downloadButton("sfm_result_csv", "데이터 다운로드(.csv)"))
              ),
              tags$br(),
@@ -426,7 +427,6 @@ server <- function(input, output, session) {
     output$sfm_target_site_summary <- renderText({
 
       print(paste0("평가후보지: ", input_data$nolbu_name,
-                   " | ", input_data$sv,
                    " | ", ifelse(input_data$nolbu_brand == 1, "부대 단독형", "부대보쌈 통합형"),
                    " | ", input_data$nolbu_address,
                    " | ", "반경 ", input_data$nolbu_radius, "m", collapse=NULL))
@@ -559,7 +559,7 @@ server <- function(input, output, session) {
              "만원 입니다. ")
 
     })
-
+    
     output$sfm_pred_text2 <- renderText({
 
       diff <- input_data_final$nolbu_sales_total/10 - input_data_final$sgbiz_sales_amt_avg
@@ -567,7 +567,6 @@ server <- function(input, output, session) {
       paste0("- 목표 후보지의 예상 매출액은 상권 평균 대비 ",
              formatC(abs(diff), big.mark = ","),
              "만원", ifelse(diff > 0, " 높습니다.", " 낮습니다."))
-
 
     })
 
@@ -587,7 +586,7 @@ server <- function(input, output, session) {
         ylab(" ") +
         ylim(0, max(store_n_trend$value)*1.2) +
         scale_x_continuous(breaks = 1:13, labels = store_n_trend$label_str) +
-        geom_text(size = 5, aes(label = value_str), stat = "identity") +
+        geom_text(size = 5, aes(label = value_str), position = position_nudge(y = 2), stat = "identity") +
         theme(legend.position = "none",
               panel.background = element_rect(fill="white"),
               panel.grid.major.y = element_line(colour = "grey", linetype="dashed"),
@@ -611,8 +610,8 @@ server <- function(input, output, session) {
                              input_data_final$sgbiz_region_household_n)) %>%
         mutate(value_str = c(paste(formatC(c(input_data_final$sgbiz_pop_fl_13,
                                              input_data_final$sgbiz_pop_res_3,
-                                             input_data_final$sgbiz_pop_work_3), big.mark = ","), "명"),
-                             paste(formatC(input_data_final$sgbiz_region_household_n, big.mark = ","), "가구")))
+                                             input_data_final$sgbiz_pop_work_3), scientific = F, big.mark = ","), "명"),
+                             paste(formatC(input_data_final$sgbiz_region_household_n, scientific = F, big.mark = ","), "가구")))
 
       ggplot(pop_df, aes(x = label, y = value, fill = label)) +
         geom_bar(stat = "identity") +
@@ -640,8 +639,8 @@ server <- function(input, output, session) {
                              input_data_final$sgbiz_pop_work_3, input_data_final$sgbiz_region_household_n)) %>%
         mutate(value_str = c(paste(formatC(c(input_data_final$sgbiz_pop_fl_13,
                                              input_data_final$sgbiz_pop_res_3,
-                                             input_data_final$sgbiz_pop_work_3), big.mark = ","), "명"),
-                             paste(formatC(input_data_final$sgbiz_region_household_n, big.mark = ","), "가구")))
+                                             input_data_final$sgbiz_pop_work_3), scientific = F, big.mark = ","), "명"),
+                             paste(formatC(input_data_final$sgbiz_region_household_n, scientific = F, big.mark = ","), "가구")))
 
       ggplot(pop_df, aes(x = label, y = value, fill = label)) +
         geom_bar(stat = "identity") +
@@ -751,7 +750,7 @@ server <- function(input, output, session) {
                              input_data_final$sgbiz_pop_fl_time_5,
                              input_data_final$sgbiz_pop_fl_time_6)
         ) %>%
-        mutate(value_str = paste(formatC(value, big.mark = ","), "명"))
+        mutate(value_str = paste(formatC(value, scientific = F, big.mark = ","), "명"))
 
       ggplot(pop_fl_time, aes(x = label, y = value, fill = label)) +
         geom_bar(stat = "identity") +
@@ -838,7 +837,7 @@ server <- function(input, output, session) {
     )
 
 
-    output$sfm_result_pdf <- downloadHandler(
+    output$sfm_result_report <- downloadHandler(
 
       filename <- function() {
 
