@@ -1,6 +1,6 @@
 # --- SETTING --- #
 .packages = c("shiny", "shinymanager", "shinyjs", "shinydashboard", "shinycssloaders",
-              "dplyr", "lubridate", "sysfonts", "plotly", "stringr", "glmnet", "reticulate")
+              "dplyr", "lubridate", "sysfonts", "plotly", "stringr", "glmnet", "reticulate", "kableExtra", "gridExtra")
 
 .inst <- .packages %in% installed.packages()
 if(length(.packages[!.inst]) > 0) install.packages(.packages[!.inst])
@@ -843,7 +843,7 @@ server <- function(input, output, session) {
       filename <- function() {
 
         paste('nolboo_sfm_report_', input_data_final$nolbu_name, "_",
-              format(Sys.time(), "%Y-%m-%d %H:%M:%S"), '.pdf', sep='')
+              format(Sys.time(), "%Y-%m-%d %H:%M:%S"), '.html', sep='')
       },
 
       content <- function(file) {

@@ -5,7 +5,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 
 chrome_options = Options()
+chrome_options.add_argument("--headless=new")  # Enable headless mode
 chrome_options.add_argument("--disable-gpu")  # Disable GPU hardware acceleration; not needed for headless.
+chrome_options.add_argument("--window-size=1920,1080")  # Optional, but it can help avoid some issues.
 
 def ExtractData(address, radius):
   
@@ -257,8 +259,7 @@ def ExtractData(address, radius):
         each_row.append(region_bus_n)
 
         target_row = pd.DataFrame(each_row)
-        print(target_row)
-        
+
         driver.close()
         return target_row
 
