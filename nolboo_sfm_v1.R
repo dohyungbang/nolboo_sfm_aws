@@ -650,7 +650,7 @@ server <- function(input, output, session) {
       sales_trend <-
         data.frame(label = 1:13,
                    label_str = year_mon_labels,
-                   value = input_data_final[,paste0("sgbiz_store_sales_amt", 1:13)] %>% as.numeric) %>%
+                   value = input_data_final[,paste0("sgbiz_store_sales_amt_", 1:13)] %>% as.numeric) %>%
         mutate(value_str = paste(formatC(value, big.mark = ","), format = "f", digit = 0, "만원"))
       
       ggplot(sales_trend, aes(x = label, y = value)) +
