@@ -20,7 +20,7 @@ library(kableExtra)
 library(gridExtra)
 library(plotly)
 library(lubridate)
-
+Sys.setlocale("LC_ALL", "Korean")
 data <- params$data %>% as.data.frame()
 attach(data)
 calCAGR <- function(x) {p <- length(x); yrs <- p-1; PV <- x[1]; FV <- x[p]; ((FV/PV)^(1/yrs)-1)}
@@ -143,21 +143,59 @@ ggplot(store_n_trend, aes(x = label, y = value)) +
 ```
 
 <br>
+
+### **2) 최근 13개월 상권 내 동종업체 월 평균 매출 추이**
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+year_mon_labels <- format(c(ym(data$sales_last_month) - months(12:1), ym(data$sales_last_month)), "%Y년 %m월")
+sales_trend <- 
+  data.frame(label = 1:13,
+             label_str = year_mon_labels,
+             value = data[,paste0("sgbiz_store_sales_amt", 1:13)] %>% as.numeric()) %>% 
+  mutate(value_str = paste(formatC(value, big.mark = ","), format = "f", digit = 0, "만원"))
+```
+
+### **분석결과:**
+#### <span style="color: blue; line-height: 1.5;"> ***해당 상권의 최근 13개월 간 동일업종 업체의 월 평균 매출액은 `r ifelse(calCAGR(sales_trend$value) > 0, "증가", "감소")`추세이며, `r year_mon_labels[13]` 기준으로 `r sales_trend$value[13]`개 입니다.***
+
+<br>
+
+```{r, echo=FALSE, message=FALSE, fig.width=12, fig.height=4}
+ggplot(sales_trend, aes(x = label, y = value)) + 
+  geom_line() + 
+  geom_point() + 
+  xlab(" ") +
+  ylab(" ") + 
+  ylim(0, max(sales_trend$value)*1.2) +
+  scale_x_continuous(breaks = 1:13, labels = sales_trend$label_str) +
+  geom_text(size = 5, aes(label = value_str), stat = "identity", vjust = 2) + 
+  theme(legend.position = "none",
+        panel.background = element_rect(fill="white"),
+        panel.grid.major.y = element_line(colour = "grey", linetype="dashed"),
+        axis.text.x = element_text(size = 13, colour = "black", angle = 45, vjust = 0.5),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.title.x = element_blank(), 
+        axis.title.y = element_blank()
+        ) 
+```
+
+<br>
  
-### **2) 가구 및 인구 분포**
+### **3) 가구 및 인구 분포**
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 pop_df <- 
   data.frame(label = c("일 평균 유동인구(명)", "목표반경 내 주거인구(명)", 
                        "목표반경 내 직장인구(명)", "목표반경 내 가구 수(가구)"),
              value = c(sgbiz_pop_fl_13, sgbiz_pop_res_3, sgbiz_pop_work_3, sgbiz_region_household_n)) %>% 
-  mutate(value_str = c(paste(formatC(c(sgbiz_pop_fl_13, sgbiz_pop_res_3, sgbiz_pop_work_3), format = "f", big.mark = ","), "명"),
-                       paste(formatC(sgbiz_region_household_n, format = "f", big.mark = ","), "가구")))
+  mutate(value_str = c(paste(formatC(c(sgbiz_pop_fl_13, sgbiz_pop_res_3, sgbiz_pop_work_3), format = "f", digit = 0, big.mark = ","), "명"),
+                       paste(formatC(sgbiz_region_household_n, format = "f", digit = 0, big.mark = ","), "가구")))
 ```
 
 
 ### **분석결과:**
-#### <span style="color: blue; line-height: 1.5;"> ***목표반경 내 가구 수는 `r formatC(data$sgbiz_region_household_n, format = "f", big.mark = ",")`가구, 주거인구는  `r formatC(data$sgbiz_pop_res_3, format = "f", big.mark = ",")`명, 직장인구는  `r formatC(data$sgbiz_pop_work_3, format = "f", big.mark = ",")`명, 일 평균 유동인구는  `r formatC(data$sgbiz_pop_fl_13, format = "f", big.mark = ",")`명 입니다.***
+#### <span style="color: blue; line-height: 1.5;"> ***목표반경 내 가구 수는 `r formatC(data$sgbiz_region_household_n, digit = 0, format = "f", big.mark = ",")`가구, 주거인구는  `r formatC(data$sgbiz_pop_res_3, digit = 0, format = "f", big.mark = ",")`명, 직장인구는  `r formatC(data$sgbiz_pop_work_3, digit = 0, format = "f", big.mark = ",")`명, 일 평균 유동인구는  `r formatC(data$sgbiz_pop_fl_13, digit = 0, format = "f", big.mark = ",")`명 입니다.***
 
 <br>
 
@@ -180,7 +218,7 @@ ggplot(pop_df, aes(x = label, y = value, fill = label)) +
 
 <br>
    
-### **3) 성별/나이별 유동인구 비중**
+### **4) 성별/나이별 유동인구 비중**
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 pop_sex_ratio <- 
@@ -249,7 +287,7 @@ grid.arrange(p1, p2, ncol=2)
 
 <br>
 
-### **4) 요일별 유동인구 분포** 
+### **5) 요일별 유동인구 분포** 
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 pop_fl_day <- 
@@ -257,7 +295,7 @@ pop_fl_day <-
            value = c(sgbiz_pop_fl_day_1,sgbiz_pop_fl_day_2,sgbiz_pop_fl_day_3,sgbiz_pop_fl_day_4,
                      sgbiz_pop_fl_day_5,sgbiz_pop_fl_day_6,sgbiz_pop_fl_day_7)
            ) %>% 
-  mutate(value_str = paste(formatC(value, format = "f", big.mark = ","), "명"))
+  mutate(value_str = paste(formatC(value, format = "f", digit = 0, big.mark = ","), "명"))
 ```
 
 ### **분석결과:**
@@ -283,7 +321,7 @@ ggplot(pop_fl_day, aes(x = label, y = value, fill = label)) +
 
 <br>
 
-### **5) 주요시간대별 유동인구 분포**
+### **6) 주요시간대별 유동인구 분포**
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 pop_fl_time <- 
@@ -291,7 +329,7 @@ pop_fl_time <-
            value = c(sgbiz_pop_fl_time_1, sgbiz_pop_fl_time_2, sgbiz_pop_fl_time_3, 
                      sgbiz_pop_fl_time_4, sgbiz_pop_fl_time_5, sgbiz_pop_fl_time_6)
            ) %>% 
-  mutate(value_str = paste(formatC(value, format = "f", big.mark = ","), "명"))
+  mutate(value_str = paste(formatC(value, format = "f", digit = 0, big.mark = ","), "명"))
 ```
 
 ### **분석결과:**
@@ -317,7 +355,7 @@ ggplot(pop_fl_time, aes(x = label, y = value, fill = label)) +
 
 <br>
 
-### **6) 상권구매력**
+### **7) 상권구매력**
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 pop_income_exp <- 
@@ -326,7 +364,7 @@ pop_income_exp <-
              value = c(sgbiz_income_res_male, sgbiz_income_res_female, sgbiz_exp_res_male, sgbiz_exp_res_female,
                        sgbiz_income_work_male, sgbiz_income_work_female, sgbiz_exp_work_male, sgbiz_exp_work_female)
            ) %>% 
-  mutate(value_str = paste(formatC(value, big.mark = ","), "백만원"))
+  mutate(value_str = paste(formatC(value, big.mark = ","), "만원"))
 ```
 
 ### **분석결과:**
@@ -340,7 +378,7 @@ ggplot(pop_income_exp, aes(x = label, y = value, fill = label)) +
   geom_bar(stat = "identity") +
   xlab(" ") +
   ggtitle("주거 및 직장인구 소득/소비") + 
-  geom_text(aes(label = value_str), stat = "identity", vjust = 2, size=6) + 
+  geom_text(aes(label = value_str), stat = "identity", vjust = 2, size=5) + 
   theme(legend.position = "none",
         panel.background = element_rect(fill="white"),
         panel.grid.major.y = element_line(colour = "grey", linetype="dashed"),
@@ -356,7 +394,7 @@ ggplot(pop_income_exp, aes(x = label, y = value, fill = label)) +
 
 <br>
 
-### **7) 상권 배후시설 정보** 
+### **8) 상권 배후시설 정보** 
 
 <br>
 ```{r, echo=FALSE, message=FALSE}

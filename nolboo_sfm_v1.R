@@ -1,6 +1,7 @@
 # --- SETTING --- #
 .packages = c("shiny", "shinymanager", "shinyjs", "shinydashboard", "shinycssloaders",
-              "dplyr", "lubridate", "sysfonts", "plotly", "stringr", "glmnet", "reticulate", "kableExtra", "gridExtra")
+              "dplyr", "lubridate", "sysfonts", "plotly", "stringr", 
+              "glmnet", "reticulate", "kableExtra", "gridExtra", "showtext")
 
 .inst <- .packages %in% installed.packages()
 if(length(.packages[!.inst]) > 0) install.packages(.packages[!.inst])
@@ -12,8 +13,12 @@ source("./sources/Isotonizer.r")
 jump_points_list <- readRDS("./sources/jump_points_list.rds")
 fitted_y_norm_list<- readRDS("./sources/fitted_y_norm_list.rds")
 sgbiz_var_lists <- readRDS("./sources/sgbiz_var_lists.rds")
-model <- readRDS("./sources/elasNet_optimal.rds")
+model <- readRDS("./sources/ridge_optimal.rds")
 source_python("./sources/DataCollector_python.py")
+
+showtext_auto()
+font_add_google('Nanum Gothic', regular.wt = 400, bold.wt = 700)
+showtext_opts(dpi = 200)
 
 write.csv.utf8.BOM <- function(df, filename) {
   con <- file(filename, "w")
@@ -188,8 +193,8 @@ sfm_body <- tabItem(
              
              br(),
              fluidRow(
-               column(3, downloadButton("sfm_result_report", "report 다운로드(.html)")),
-               column(3, downloadButton("sfm_result_csv", "데이터 다운로드(.csv)"))
+               column(3, downloadButton("sfm_result_report", "report 다운로드(.html)"))
+               # column(3, downloadButton("sfm_result_csv", "데이터 다운로드(.csv)"))
              ),
              tags$br(),
              
@@ -270,6 +275,14 @@ sfm_body <- tabItem(
                  fluidRow(
                    column(12,
                           withSpinner(plotlyOutput("sfm_sgbiz_store_trend"))
+                   )
+                 ),
+                 tags$hr(),
+                 
+                 h3(strong('동종 업체 월 평균 매출액 추이')),
+                 fluidRow(
+                   column(12,
+                          withSpinner(plotlyOutput("sfm_sgbiz_sales_trend"))
                    )
                  ),
                  tags$hr(),
@@ -411,6 +424,7 @@ server <- function(input, output, session) {
     output$sfm_pred_text1 <- renderText({ withSpinner(NULL) })
     output$sfm_pred_text2 <- renderText({ withSpinner(NULL) })
     output$sfm_sgbiz_store_trend <- renderPlotly({ withSpinner(NULL) })
+    output$sfm_sgbiz_sales_trend <- renderPlotly({ withSpinner(NULL) })
     output$sfm_sgbiz_pop <- renderPlotly({ withSpinner(NULL) })
     output$sfm_sgbiz_fl_sex_ratio <- renderPlotly({ withSpinner(NULL) })
     output$sfm_sgbiz_fl_age_ratio <- renderPlotly({ withSpinner(NULL) })
@@ -630,6 +644,35 @@ server <- function(input, output, session) {
       
     })
     
+    output$sfm_sgbiz_sales_trend <- renderPlotly({
+      
+      year_mon_labels <- format(c(ym(input_data_final$sales_last_month) - months(12:1), ym(input_data_final$sales_last_month)), "%Y년 %m월")
+      sales_trend <-
+        data.frame(label = 1:13,
+                   label_str = year_mon_labels,
+                   value = input_data_final[,paste0("sgbiz_store_sales_amt", 1:13)] %>% as.numeric) %>%
+        mutate(value_str = paste(formatC(value, big.mark = ","), format = "f", digit = 0, "만원"))
+      
+      ggplot(sales_trend, aes(x = label, y = value)) +
+        geom_line() +
+        geom_point() +
+        xlab(" ") +
+        ylab(" ") +
+        ylim(0, max(sales_trend$value)*1.2) +
+        scale_x_continuous(breaks = 1:13, labels = sales_trend$label_str) +
+        geom_text(size = 5, aes(label = value_str), position = position_nudge(y = 1), stat = "identity") +
+        theme(legend.position = "none",
+              panel.background = element_rect(fill="white"),
+              panel.grid.major.y = element_line(colour = "grey", linetype="dashed"),
+              axis.text.x = element_text(size = 13, colour = "black", angle = 45, vjust = 0.5),
+              axis.text.y = element_blank(),
+              axis.ticks.y = element_blank(),
+              axis.title.x = element_blank(),
+              axis.title.y = element_blank()
+        )
+      
+    })
+    
     output$sfm_sgbiz_pop <- renderPlotly({
       
       pop_df <-
@@ -782,7 +825,7 @@ server <- function(input, output, session) {
                              input_data_final$sgbiz_exp_work_male,
                              input_data_final$sgbiz_exp_work_female)
         ) %>%
-        mutate(value_str = paste(formatC(value, big.mark = ","), "백만원"))
+        mutate(value_str = paste(formatC(value, big.mark = ","), "만원"))
       
       ggplot(pop_income_exp, aes(x = label, y = value, fill = label)) +
         facet_wrap(~category, nrow = 1) +
@@ -825,16 +868,16 @@ server <- function(input, output, session) {
     }, width = "100%")
     
     
-    output$sfm_result_csv <- downloadHandler(
-      filename = function() {
-        
-        paste("nolboo_sfm_data_", input_data_final$nolbu_name, "_",
-              format(Sys.time(), "%Y-%m-%d %H:%M:%S"), ".csv", sep="")
-      },
-      content = function(file) {
-        write.csv.utf8.BOM(input_data_final, file)
-      }
-    )
+    # output$sfm_result_csv <- downloadHandler(
+    #   filename = function() {
+    #     
+    #     paste("nolboo_sfm_data_", input_data_final$nolbu_name, "_",
+    #           format(Sys.time(), "%Y-%m-%d %H:%M:%S"), ".csv", sep="")
+    #   },
+    #   content = function(file) {
+    #     write.csv.utf8.BOM(input_data_final, file)
+    #   }
+    # )
     
     
     output$sfm_result_report <- downloadHandler(

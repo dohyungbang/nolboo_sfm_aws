@@ -10,6 +10,7 @@ chrome_options.add_argument('--disable-dev-shm-usage')  # Overcome limited resou
 chrome_options.add_argument('--headless=new')  # Run in headless mode
 chrome_options.add_argument('--disable-gpu')  # Disable GPU hardware acceleration
 chrome_options.add_argument('--remote-debugging-port=9222')  # This is sometimes necessary
+chrome_options.add_argument('--window-size=1920,1080')  # Set the window size
 
 def ExtractData(address, radius):
   
