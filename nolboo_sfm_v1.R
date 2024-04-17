@@ -608,7 +608,7 @@ server <- function(input, output, session) {
       diff <- input_data_final$nolbu_sales_total/10 - input_data_final$sgbiz_sales_amt_avg
       
       paste0("- 목표 후보지의 예상 매출액은 ",
-             formatC(input_data_final$nolbu_sales_total/10, big.mark = ","),
+             formatC(input_data_final$nolbu_sales_total/10, format = "f", digit = 0, big.mark = ","),
              "만원 입니다. ")
       
     })

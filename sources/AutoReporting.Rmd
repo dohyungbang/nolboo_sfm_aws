@@ -43,7 +43,7 @@ t1 <- data.frame(`변수명` = c("홀 면적(평)", "주방 면적(평)",
                            "테이블 수(개)", "좌석 수(개)", "매장층 수(층)", 
                            "건물전체 층 수(층)", "일 평균 영업시간(시간)", "월 평균 영업일수(일)"),
            `입력값`= c(data$nolbu_store_area_hall, data$nolbu_store_area_kitchen, data$nolbu_store_table, 
-                      data$nolbu_store_chair, data$nolbu_store_floor, data$nolbu_bldg_floor, data$nolbu_bldg_parking,
+                      data$nolbu_store_chair, data$nolbu_store_floor, data$nolbu_bldg_floor,
                       data$nolbu_store_oper_time, data$nolbu_store_oper_day))
 
 t2 <- data.frame(`변수명` = c("주차가능 여부(1=가능; 0=불가능)",  "예상 직원 수 - 풀타임(명)", "예상직원 수 - 파트타임(명)", 
@@ -152,11 +152,11 @@ sales_trend <-
   data.frame(label = 1:6,
              label_str = year_mon_labels,
              value = data[,paste0("sgbiz_sales_amt_", 8:13)] %>% as.numeric()) %>% 
-  mutate(value_str = paste(formatC(value, big.mark = ","), format = "f", digit = 0, "만원"))
+  mutate(value_str = paste(formatC(value, format = "f", digit = 0, big.mark = ","), "만원"))
 ```
 
 ### **분석결과:**
-#### <span style="color: blue; line-height: 1.5;"> ***해당 상권의 최근 13개월 간 동일업종 업체의 월 평균 매출액은 `r ifelse(calCAGR(sales_trend$value) > 0, "증가", "감소")`추세이며, `r year_mon_labels[13]` 기준으로 `r sales_trend$value[13]`개 입니다.***
+#### <span style="color: blue; line-height: 1.5;"> ***해당 상권의 최근 6개월 간 동일업종 업체의 월 평균 매출액은 `r ifelse(calCAGR(sales_trend$value) > 0, "증가", "감소")`추세이며, `r year_mon_labels[6]` 기준으로 `r sales_trend$value[6]`만원 입니다.***
 
 <br>
 
