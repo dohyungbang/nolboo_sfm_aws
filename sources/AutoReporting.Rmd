@@ -296,7 +296,8 @@ pop_fl_day <-
            value = c(sgbiz_pop_fl_day_1,sgbiz_pop_fl_day_2,sgbiz_pop_fl_day_3,sgbiz_pop_fl_day_4,
                      sgbiz_pop_fl_day_5,sgbiz_pop_fl_day_6,sgbiz_pop_fl_day_7)
            ) %>% 
-  mutate(value_str = paste(formatC(value, format = "f", digit = 0, big.mark = ","), "명"))
+  mutate(value_str = paste(formatC(value, format = "f", digit = 0, big.mark = ","), "명")) %>% 
+  mutate(label = factor(label, levels = c("월요일", "화요일", "수요일", "목요일", "금요일", "토요일", "일요일")))
 ```
 
 ### **분석결과:**

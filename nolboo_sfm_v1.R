@@ -772,7 +772,8 @@ server <- function(input, output, session) {
                              input_data_final$sgbiz_pop_fl_day_5, input_data_final$sgbiz_pop_fl_day_6,
                              input_data_final$sgbiz_pop_fl_day_7)
         ) %>%
-        mutate(value_str = paste(formatC(value, format = "f", digit = 0, big.mark = ","), "명"))
+        mutate(value_str = paste(formatC(value, format = "f", digit = 0, big.mark = ","), "명")) %>% 
+        mutate(label = factor(label, levels = c("월요일", "화요일", "수요일", "목요일", "금요일", "토요일", "일요일")))
       
       ggplot(pop_fl_day, aes(x = label, y = value, fill = label)) +
         geom_bar(stat = "identity") +
