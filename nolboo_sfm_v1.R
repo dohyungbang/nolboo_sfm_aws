@@ -10,10 +10,10 @@ lapply(.packages, require, character.only=TRUE)
 
 source("./sources/DataProcessor.r")
 source("./sources/Isotonizer.r")
-jump_points_list <- readRDS("./sources/jump_points_list.rds")
-fitted_y_norm_list<- readRDS("./sources/fitted_y_norm_list.rds")
+jump_points_list <- readRDS("./sources/jump_points_list_v2.rds")
+fitted_y_norm_list<- readRDS("./sources/fitted_y_norm_list_v2.rds")
 sgbiz_var_lists <- readRDS("./sources/sgbiz_var_lists.rds")
-model <- readRDS("./sources/ridge_optimal.rds")
+model <- readRDS("./sources/ridge_optimal_v2.rds")
 source_python("./sources/DataCollector_python.py")
 
 showtext_auto()
