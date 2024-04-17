@@ -6,7 +6,7 @@ Isotonizer <- function(jump_points_list, fitted_y_norm_list, data){
     
     target_var_name <- target_var_lists[i]
     iso_value <- 
-      cut(2, c(-1, jump_points_list[[target_var_name]]), labels = fitted_y_norm_list[[target_var_name]]) %>% 
+      cut(data[,target_var_name], c(-1, jump_points_list[[target_var_name]]), labels = fitted_y_norm_list[[target_var_name]]) %>% 
       as.character() %>% 
       as.numeric()
     iso_value <- ifelse(is.na(iso_value), 1, iso_value)

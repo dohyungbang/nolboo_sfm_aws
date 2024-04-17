@@ -238,6 +238,7 @@ sfm_body <- tabItem(
                  
                  fluidRow(
                    column(12,
+                          withspinner(valueBoxOutput("sfm_output_del_ad_cost", width=3)),
                           withSpinner(valueBoxOutput("sfm_output_del_tpl", width=3)),
                           withSpinner(valueBoxOutput("sfm_output_del_store", width=3))
                    )
@@ -418,6 +419,7 @@ server <- function(input, output, session) {
     output$sfm_output_emp_full <- renderValueBox({ withSpinner(NULL) })
     output$sfm_output_emp_part <- renderValueBox({ withSpinner(NULL) })
     output$sfm_output_rentcost <- renderValueBox({ withSpinner(NULL) })
+    output$sfm_output_del_ad_cost <- renderValueBox({ withSpinner(NULL) })
     output$sfm_output_del_tpl <- renderValueBox({ withSpinner(NULL) })
     output$sfm_output_del_store <- renderValueBox({ withSpinner(NULL) })
     output$sfm_pred_plot <- renderPlotly({ withSpinner(NULL) })
@@ -556,6 +558,12 @@ server <- function(input, output, session) {
     output$sfm_output_rentcost <- renderValueBox({
       
       valueBox(formatC(input_data_final$nolbu_rent, big.mark = ","), "예상 월 임대료(만원)", color="olive")
+      
+    })
+    
+    output$sfm_output_del_ad_cost <- renderValueBox({
+      
+      valueBox(ifelse(input_data_final$nolbu_delivery_rider_tpl==1, "이용", "미이용"), "예상 월 배달판촉비(원)", color="purple")
       
     })
     
