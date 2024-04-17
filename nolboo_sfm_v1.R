@@ -140,8 +140,8 @@ sfm_body <- tabItem(
                  
                  h4(strong('목표 후보지 브랜드 및 매장 특성 ')),
                  fluidRow(
-                   column(4, numericInput("sfm_input_area_hall", "홀 면적 (평방미터): ", value = 0)),
-                   column(4, numericInput("sfm_input_area_kitchen", "주방 면적 (평방미터): ", value = 0)),
+                   column(4, numericInput("sfm_input_area_hall", "홀 면적 (평): ", value = 0)),
+                   column(4, numericInput("sfm_input_area_kitchen", "주방 면적 (평): ", value = 0)),
                    column(4, numericInput("sfm_input_ntable", "테이블 수 (개): ", value = 0))
                  ),
                  fluidRow(
@@ -238,7 +238,7 @@ sfm_body <- tabItem(
                  
                  fluidRow(
                    column(12,
-                          withspinner(valueBoxOutput("sfm_output_del_ad_cost", width=3)),
+                          withSpinner(valueBoxOutput("sfm_output_del_ad_cost", width=3)),
                           withSpinner(valueBoxOutput("sfm_output_del_tpl", width=3)),
                           withSpinner(valueBoxOutput("sfm_output_del_store", width=3))
                    )
@@ -493,12 +493,12 @@ server <- function(input, output, session) {
     #### --- VALUE BOX --- ####
     output$sfm_output_area_hall <- renderValueBox({
       
-      valueBox(input_data_final$nolbu_store_area_hall, "홀 면적(m2)", color="blue")
+      valueBox(input_data_final$nolbu_store_area_hall, "홀 면적(평)", color="blue")
     })
     
     output$sfm_output_area_kitchen <- renderValueBox({
       
-      valueBox(input_data_final$nolbu_store_area_kitchen, "주방 면적(m2)", color="blue")
+      valueBox(input_data_final$nolbu_store_area_kitchen, "주방 면적(평)", color="blue")
       
     })
     
