@@ -103,7 +103,7 @@ kakao_post_code_api <-
            ),
            column(4,
                   div(class = "align-top",
-                      selectInput("sfm_input_radius", h4(strong("목표 반경 (미터):")), choices = c(seq(500, 1500,by=100)) )
+                      selectInput("sfm_input_radius", h4(strong("목표 반경 (미터):")), choices = c(seq(300, 1500,by=100)) )
                   )
            )
          ),
@@ -584,7 +584,7 @@ server <- function(input, output, session) {
       sales_df <-
         data.frame(label = c("후보지 예상 매출액(만원)", "상권 내 동종업체 매출액(만원)"),
                    value = c(input_data_final$nolbu_sales_total/10, input_data_final$sgbiz_sales_amt_avg)) %>%
-        mutate(value_str = paste(formatC(round(value, digits = 1), big.mark = ","), "만원"))
+        mutate(value_str = paste(formatC(round(value, digits = 1), format = "f", digit = 0, big.mark = ","), "만원"))
       
       ggplot(sales_df, aes(x = label, y = value, fill = label)) +
         geom_bar(stat = "identity") +
@@ -667,7 +667,7 @@ server <- function(input, output, session) {
         xlab(" ") +
         ylab(" ") +
         ylim(0, max(sales_trend$value)*1.2) +
-        scale_x_continuous(breaks = 1:13, labels = sales_trend$label_str) +
+        scale_x_continuous(breaks = 1:6, labels = sales_trend$label_str) +
         geom_text(size = 5, aes(label = value_str), stat = "identity", position = position_nudge(y = max(sales_trend$value)*0.05)) +
         theme(legend.position = "none",
               panel.background = element_rect(fill="white"),
