@@ -48,10 +48,10 @@ t1 <- data.frame(`변수명` = c("홀 면적(평)", "주방 면적(평)",
 
 t2 <- data.frame(`변수명` = c("주차가능 여부(1=가능; 0=불가능)",  "예상 직원 수 - 풀타임(명)", "예상직원 수 - 파트타임(명)", 
                               "예상 월 배달판촉비(원)", "배달대행 (1=이용; 0=이용안함)", "직접배달 (1=이용; 0=이용안함)",
-                              "예상 월 임대료(원)"),
+                              "예상 월 임대료(원)", "."),
                  `입력값` = c(data$nolbu_bldg_parking, data$nolbu_store_emp_full, data$nolbu_store_emp_part, 
                               data$nolbu_delivery_ad_cost, data$nolbu_delivery_rider_tpl, data$nolbu_delivery_rider_store, 
-                              data$nolbu_rent))
+                              data$nolbu_rent, "."))
 
 kable(t1, "html") %>%
   kable_styling(full_width = F, position = "center", font_size = 14) %>%
@@ -66,6 +66,7 @@ kable(t2, "html") %>%
   kable_styling(position = "left")
 ```
 
+<br>
 ---
 
 ## **2. 매출예측결과**
