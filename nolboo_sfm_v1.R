@@ -272,7 +272,7 @@ sfm_body <- tabItem(
                  width = 12,
                  color="black",
                  
-                 h3(strong('동종 업체 수 추이')),
+                 h3(strong('최근 13개월 동종 업체 수 추이')),
                  fluidRow(
                    column(12,
                           withSpinner(plotlyOutput("sfm_sgbiz_store_trend"))
@@ -280,7 +280,7 @@ sfm_body <- tabItem(
                  ),
                  tags$hr(),
                  
-                 h3(strong('동종 업체 월 평균 매출액 추이')),
+                 h3(strong('최근 6개월 동종 업체 월 평균 매출액 추이')),
                  fluidRow(
                    column(12,
                           withSpinner(plotlyOutput("sfm_sgbiz_sales_trend"))
@@ -654,12 +654,12 @@ server <- function(input, output, session) {
     
     output$sfm_sgbiz_sales_trend <- renderPlotly({
       
-      year_mon_labels <- format(c(ym(input_data_final$sales_last_month) - months(12:1), ym(input_data_final$sales_last_month)), "%Y년 %m월")
+      year_mon_labels <- format(c(ym(input_data_final$sales_last_month) - months(5:1), ym(input_data_final$sales_last_month)), "%Y년 %m월")
       sales_trend <-
-        data.frame(label = 1:13,
+        data.frame(label = 1:6,
                    label_str = year_mon_labels,
-                   value = input_data_final[,paste0("sgbiz_store_sales_amt_", 1:13)] %>% as.numeric) %>%
-        mutate(value_str = paste(formatC(value, big.mark = ","), format = "f", digit = 0, "만원"))
+                   value = input_data_final[,paste0("sgbiz_sales_amt_", 8:13)] %>% as.numeric) %>%
+        mutate(value_str = paste(formatC(value, format = "f", digit = 0, big.mark = ","), "만원"))
       
       ggplot(sales_trend, aes(x = label, y = value)) +
         geom_line() +
@@ -668,7 +668,7 @@ server <- function(input, output, session) {
         ylab(" ") +
         ylim(0, max(sales_trend$value)*1.2) +
         scale_x_continuous(breaks = 1:13, labels = sales_trend$label_str) +
-        geom_text(size = 5, aes(label = value_str), position = position_nudge(y = 1), stat = "identity") +
+        geom_text(size = 5, aes(label = value_str), stat = "identity", position = position_nudge(y = max(sales_trend$value)*0.05)) +
         theme(legend.position = "none",
               panel.background = element_rect(fill="white"),
               panel.grid.major.y = element_line(colour = "grey", linetype="dashed"),
