@@ -557,13 +557,13 @@ server <- function(input, output, session) {
     
     output$sfm_output_rentcost <- renderValueBox({
       
-      valueBox(formatC(input_data_final$nolbu_rent, big.mark = ","), "예상 월 임대료(만원)", color="olive")
+      valueBox(formatC(input_data_final$nolbu_rent, format = "f", digit = 0, big.mark = ","), "예상 월 임대료(만원)", color="olive")
       
     })
     
     output$sfm_output_del_ad_cost <- renderValueBox({
       
-      valueBox(ifelse(input_data_final$nolbu_delivery_rider_tpl==1, "이용", "미이용"), "예상 월 배달판촉비(원)", color="purple")
+      valueBox(formatC(input_data_final$nolbu_delivery_ad_cost==1, format = "f", digit = 0, big.mark = ","), "예상 월 배달판촉비(원)", color="purple")
       
     })
     
