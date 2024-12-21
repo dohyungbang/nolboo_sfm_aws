@@ -23,11 +23,11 @@ def ExtractData(address, radius):
         # SEND ID & PW 
         driver.find_element("css selector", '#id').click()
         driver.find_element("css selector", '#id').clear()
-        driver.find_element("css selector", '#id').send_keys("bdh718")
+        driver.find_element("css selector", '#id').send_keys("ID")
         time.sleep(3)
         driver.find_element("css selector", '#pass').click()
         driver.find_element("css selector", '#pass').clear()
-        driver.find_element("css selector", '#pass').send_keys("@@qkd90718")
+        driver.find_element("css selector", '#pass').send_keys("PW")
         time.sleep(3)
 
         # LOGIN
